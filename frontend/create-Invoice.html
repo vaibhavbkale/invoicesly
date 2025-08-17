@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>New Invoice – Invoicely</title>
+  <link href="css/app.css" rel="stylesheet">
+</head>
+<body>
+  <div class="wrapper">
+    <nav id="sidebar" class="sidebar">
+      <div class="sidebar-content">
+        <a class="sidebar-brand" href="index.html">Invoicely</a>
+        <ul class="sidebar-nav">
+          <li class="sidebar-item"><a class="sidebar-link" href="index.html">Dashboard</a></li>
+          <li class="sidebar-item"><a class="sidebar-link" href="invoices.html">Invoice List</a></li>
+          <li class="sidebar-item active"><a class="sidebar-link" href="create-Invoice.html">Create Invoice</a></li>
+          <li class="sidebar-item"><a class="sidebar-link" href="settings.html">Settings</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="main">
+      <nav class="navbar navbar-expand navbar-light navbar-bg">
+        <a class="sidebar-toggle js-sidebar-toggle"><i class="hamburger align-self-center"></i></a>
+        <div class="navbar-collapse collapse">
+          <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item me-3">
+              <span id="onlineBadge" class="sync-indicator bg-light border">
+                <span class="status-dot status-online" id="statusDot"></span>
+                <span id="onlineText">Online</span>
+              </span>
+            </li>
+            <li class="nav-item me-3">
+              <span class="badge bg-secondary badge-pill">Pending Sync: <span id="pendingCount">0</span></span>
+            </li>
+            <li class="nav-item me-2">
+              <button id="syncNowBtn" class="btn btn-sm btn-primary">Sync Now</button>
+            </li>
+            <li class="nav-item">
+              <button id="themeToggle" class="btn btn-sm btn-outline-secondary" title="Toggle theme">
+                <i data-feather="moon"></i>
+              </button>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+    <div class="main">
+      <main class="content">
+        <div class="container-fluid p-0">
+          <h1 class="h3 mb-3">Create New Invoice</h1>
+          <div class="card">
+            <div class="card-body">
+             <div class="container">
+        <!-- Product Details Section -->
+        <div class="form-section">
+          
+            <form  action="#" method="Post">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label for="barcode" class="form-label">Barcode:</label>
+                        <input type="text" class="form-control" id="barcode" name="barcode" placeholder="Enter barcode" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="productName" class="form-label">Product Name:</label>
+                        <input type="text" class="form-control" id="productName" name="productName" placeholder="Enter product name" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="cost" class="form-label">Cost:</label>
+                        <input type="number" step="0.01" class="form-control" id="cost" name="cost" placeholder="Enter cost" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="quantity" class="form-label">Quantity:</label>
+                        <input type="number" class="form-control" id="quantity" name="quantity" placeholder="Enter quantity" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="gst" class="form-label">GST %:</label>
+                        <input type="number" step="0.01" class="form-control" id="gst" name="gst" placeholder="Enter GST percentage" required>
+                    </div>
+                </div>
+                    
+                <div class="row g-3 mt-3">
+                    <label for="gstDetails" class="form-label">GST Details</label>   
+                    <div class="col-md-3">
+                        <label for="sgst" class="form-label">SGST Amount:</label>
+                        <input type="number" step="0.01" class="form-control" id="sgst" name="sgst" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="cgst" class="form-label">CGST Amount:</label>
+                        <input type="number" step="0.01" class="form-control" id="cgst" name="cgst" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="totalGst" class="form-label">Total GST:</label>
+                        <input type="number" step="0.01" class="form-control" id="totalGst" name="totalGst" readonly>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-3">
+                    <div class="col-md-3">
+                        <label for="netTotal" class="form-label">Net Total:</label>
+                        <input type="number" step="0.01" class="form-control" id="netTotal" name="netTotal" readonly>
+                    </div>
+                   
+                </div>
+                <button type="submit" class="btn btn-success mt-3">Submit</button>
+            </form>
+       
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	   <script>
+	      // Calculate GST on cost change
+	      document.getElementById("cost").addEventListener("input", calculateGST);
+	      document.getElementById("gst").addEventListener("input", calculateGST);
+
+	      function calculateGST() {
+	          var cost = parseFloat(document.getElementById("cost").value) || 0;
+	          var gstPercent = parseFloat(document.getElementById("gst").value) || 0;
+			  var quantity = parseFloat(document.getElementById("quantity").value) || 0;
+
+	          var gstAmount = (cost*gstPercent) / 100;
+	          var sgstAmount = gstAmount / 2;
+	          var cgstAmount = gstAmount / 2;
+	          var totalGst = sgstAmount + cgstAmount;
+			  var SubTotal = cost*quantity;
+	          var netTotal = SubTotal + totalGst;
+
+	          // Update GST fields
+	          document.getElementById("sgst").value = sgstAmount.toFixed(2);
+	          document.getElementById("cgst").value = cgstAmount.toFixed(2);	
+	          document.getElementById("totalGst").value = totalGst.toFixed(2);
+	          document.getElementById("netTotal").value = netTotal.toFixed(2);
+	      }
+
+		
+	  </script>
+</body>
+</html>
