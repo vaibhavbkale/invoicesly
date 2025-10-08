@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>New Sales Bill – Invoicely</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/app.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+<div class="wrapper">
+    <!-- Sidebar -->
+    <nav id="sidebar" class="sidebar js-sidebar">
+        <div class="sidebar-content js-simplebar">
+            <a class="sidebar-brand" href="index.html"><span class="align-middle">INVOICELY</span></a>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item"><a class="sidebar-link" href="index.html">Dashboard</a></li>
+                <li class="sidebar-item"><a class="sidebar-link" href="invoices.html">Invoice List</a></li>
+                <li class="sidebar-item"><a class="sidebar-link" href="Purchase-Invoice.html">Create Purchase Invoice</a></li>
+                <li class="sidebar-item active"><a class="sidebar-link" href="Sales-Invoice.html">Create Sales Invoice</a></li>
+                <li class="sidebar-item"><a class="sidebar-link" href="settings.html">Settings</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main">
+        <main class="content">
+            <div class="container-fluid p-0">
+                <h1 class="h3 mb-3">Create New Sales Bill</h1>
+                <div class="card">
+                    <div class="card-body" id="printArea">
+
+                        <!-- Invoice Info -->
+                        <div class="row mb-4">
+                            <div class="col-md-3"><input type="text" id="invoiceNo" class="form-control" placeholder="Invoice No"></div>
+                            <div class="col-md-3"><input type="date" id="invoiceDate" class="form-control"></div>
+                            <div class="col-md-3"><input type="text" id="vehicleNo" class="form-control" placeholder="Vehicle No"></div>
+                            <div class="col-md-3"><input type="text" id="driverNo" class="form-control" placeholder="Driver No"></div>
+                        </div>
+
+                        <!-- Supplier & Customer -->
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h5>Supplier</h5>
+                                <input type="text" id="supplierFirmName" class="form-control mb-2" placeholder="Firm Name">
+                                <input type="text" id="supplierContactNo" class="form-control mb-2" placeholder="Contact Number">
+                                <input type="text" id="supplierAddress" class="form-control mb-2" placeholder="Address">
+                                <input type="text" id="supplierGstin" class="form-control mb-2" placeholder="GSTIN/UIN">
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Customer</h5>
+                                <input type="text" id="customerName" class="form-control mb-2" placeholder="Customer Name">
+                                <input type="text" id="customerContactNo" class="form-control mb-2" placeholder="Contact Number">
+                                <input type="text" id="customerAddress" class="form-control mb-2" placeholder="Address">
+                                <input type="text" id="customerGstin" class="form-control mb-2" placeholder="GSTIN/UIN">
+                            </div>
+                        </div>
+
+                        <!-- Product Table -->
+                        <h5>Item Details</h5>
+                        <table class="table table-bordered" id="productTable">
+                            <thead>
+                            <tr>
+                                <th>Sr No</th>
+                                <th>Description</th>
+                                <th>HSN/SAC</th>
+                                <th>Qty Kg</th>
+                                <th>Rate</th>
+                                <th>No's</th>
+                                <th>Disc %</th>
+                                <th>Amount</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody id="itemTable">
+                            <tr>
+                                <td>1</td>
+                                <td><input type="text" class="form-control desc"></td>
+                                <td><input type="text" class="form-control hsnSac"></td>
+                                <td><input type="number" class="form-control qtyKg" oninput="updateAmount(this)"></td>
+                                <td><input type="number" class="form-control rate" oninput="updateAmount(this)"></td>
+                                <td><input type="number" class="form-control nos" value="1" oninput="updateAmount(this)"></td>
+                                <td><input type="number" class="form-control discPercent" value="0" oninput="updateAmount(this)"></td>
+                                <td><input type="text" class="form-control amount" readonly></td>
+                                <td><button class="btn btn-danger btn-sm" onclick="deleteRow(this)">Delete</button></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <button class="btn btn-secondary mb-3" onclick="addRow()">+ Add Item</button>
+
+                        <!-- Totals -->
+                        <div class="row mb-3 mt-3">
+                            <div class="col-md-3"><input type="number" id="roundOff" class="form-control" placeholder="Round Off" oninput="calculateTotals()"></div>
+                            <div class="col-md-3"><input type="number" id="total" class="form-control" placeholder="Total" readonly></div>
+                            <div class="col-md-3"><input type="number" id="receivedAmount" class="form-control" placeholder="Received Amount" oninput="calculateTotals()"></div>
+                            <div class="col-md-3"><input type="number" id="pendingAmount" class="form-control" placeholder="Pending Amount" readonly></div>
+                        </div>
+
+                        <div class="text-end">
+                            <button class="btn btn-warning" onclick="printInvoice()">🖨️ Print Bill</button>
+                            <button class="btn btn-primary" onclick="saveInvoice()">Save Invoice</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+    function addRow() {
+        let table = document.getElementById("itemTable");
+        let rowCount = table.rows.length;
+        let row = table.insertRow();
+        row.innerHTML = `
+            <td>${rowCount + 1}</td>
+            <td><input type="text" class="form-control desc"></td>
+            <td><input type="text" class="form-control hsnSac"></td>
+            <td><input type="number" class="form-control qtyKg" oninput="updateAmount(this)"></td>
+            <td><input type="number" class="form-control rate" oninput="updateAmount(this)"></td>
+            <td><input type="number" class="form-control nos" value="1" oninput="updateAmount(this)"></td>
+            <td><input type="number" class="form-control discPercent" value="0" oninput="updateAmount(this)"></td>
+            <td><input type="text" class="form-control amount" readonly></td>
+            <td><button class="btn btn-danger btn-sm" onclick="deleteRow(this)">Delete</button></td>`;
+    }
+
+    function deleteRow(button) {
+        let table = document.getElementById("itemTable");
+        if(table.rows.length === 1) { alert("At least one row is required!"); return; }
+        button.closest("tr").remove();
+        updateSrNo();
+        calculateTotals();
+    }
+
+    function updateSrNo() {
+        document.querySelectorAll("#itemTable tr").forEach((row, idx) => row.cells[0].innerText = idx + 1);
+    }
+
+    function updateAmount(element) {
+        let row = element.closest("tr");
+        let qty = parseFloat(row.querySelector(".qtyKg").value) || 0;
+        let rate = parseFloat(row.querySelector(".rate").value) || 0;
+        let nos = parseFloat(row.querySelector(".nos").value) || 0;
+        let disc = parseFloat(row.querySelector(".discPercent").value) || 0;
+        let amount = (qty * rate * nos) - ((qty * rate * nos) * disc / 100);
+        row.querySelector(".amount").value = amount.toFixed(2);
+        calculateTotals();
+    }
+
+    function calculateTotals() {
+        let total = 0;
+        document.querySelectorAll("#itemTable tr").forEach(row => {
+            total += parseFloat(row.querySelector(".amount").value) || 0;
+        });
+        let roundOff = parseFloat(document.getElementById("roundOff").value) || 0;
+        total += roundOff;
+        document.getElementById("total").value = total.toFixed(2);
+
+        let received = parseFloat(document.getElementById("receivedAmount").value) || 0;
+        document.getElementById("pendingAmount").value = (total - received).toFixed(2);
+    }
+
+    async function saveInvoice() {
+        const items = [];
+        document.querySelectorAll("#itemTable tr").forEach((row, idx) => {
+            items.push({
+                srNo: idx + 1,
+                description: row.querySelector(".desc").value,
+                hsnSac: row.querySelector(".hsnSac").value,
+                quantityKg: parseFloat(row.querySelector(".qtyKg").value) || 0,
+                rate: parseFloat(row.querySelector(".rate").value) || 0,
+                nos: parseFloat(row.querySelector(".nos").value) || 0,
+                discPercent: parseFloat(row.querySelector(".discPercent").value) || 0,
+                amount: parseFloat(row.querySelector(".amount").value) || 0
+            });
+        });
+
+        const invoice = {
+            id: 0,
+            invoiceNo: document.getElementById("invoiceNo").value,
+            invoiceDate: document.getElementById("invoiceDate").value,
+            vehicleNo: document.getElementById("vehicleNo").value,
+            driverNo: document.getElementById("driverNo").value,
+            supplierFirmName: document.getElementById("supplierFirmName").value,
+            supplierContactNo: document.getElementById("supplierContactNo").value,
+            supplierAddress: document.getElementById("supplierAddress").value,
+            supplierGstin: document.getElementById("supplierGstin").value,
+            customerName: document.getElementById("customerName").value,
+            customerContactNo: document.getElementById("customerContactNo").value,
+            customerAddress: document.getElementById("customerAddress").value,
+            customerGstin: document.getElementById("customerGstin").value,
+            itemsJson: JSON.stringify(items),
+            items: items,
+            roundOff: parseFloat(document.getElementById("roundOff").value) || 0,
+            total: parseFloat(document.getElementById("total").value) || 0,
+            receivedAmount: parseFloat(document.getElementById("receivedAmount").value) || 0,
+            pendingAmount: parseFloat(document.getElementById("pendingAmount").value) || 0,
+            amountInWords: "" // optional: can add a function to convert total to words
+        };
+
+        try {
+            await axios.post("http://localhost:8080/api/sales", invoice);
+            alert("Invoice saved successfully!");
+            location.reload();
+        } catch (err) {
+            console.error(err);
+            alert("Failed to save invoice!");
+        }
+    }
+
+    function printInvoice() {
+        const printContent = document.getElementById("printArea").innerHTML;
+        const originalContent = document.body.innerHTML;
+        document.body.innerHTML = printContent;
+        window.print();
+        document.body.innerHTML = originalContent;
+    }
+
+    document.querySelectorAll(".qtyKg, .rate, .nos, .discPercent").forEach(input => {
+        input.addEventListener("input", () => updateAmount(input));
+    });
+</script>
+</body>
+</html>

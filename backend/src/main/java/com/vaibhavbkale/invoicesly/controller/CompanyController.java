@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/companies")
+@CrossOrigin(origins = "*") // <-- Allow frontend Axios calls from any domain
 public class CompanyController {
     private final CompanyProfileService service;
 

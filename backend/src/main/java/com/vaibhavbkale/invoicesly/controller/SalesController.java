@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/sales")
+@RequestMapping("/api/sales") // This is the base URL for your sales invoice API
+@CrossOrigin(origins = "*") // Allows the HTML file to send requests to this backend
 public class SalesController {
     private final SalesInvoiceService service;
 
@@ -16,6 +17,7 @@ public class SalesController {
         this.service = service;
     }
 
+    // The HTML form will send a POST request to this method
     @PostMapping
     public ResponseEntity<SalesInvoice> create(@RequestBody SalesInvoice invoice) {
         return ResponseEntity.ok(service.create(invoice));
@@ -36,6 +38,8 @@ public class SalesController {
     public ResponseEntity<SalesInvoice> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.getById(id));
     }
+
+
 
     @GetMapping
     public ResponseEntity<List<SalesInvoice>> getAll() {
