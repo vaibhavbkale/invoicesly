@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Invoicely • Invoice-List</title>
+    <title>Invoicely • Purchase Invoice-List</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -16,7 +16,6 @@
         .table-small td, .table-small th { padding: .5rem .6rem; }
     </style>
 </head>
-aq
 <body>
 <div class="wrapper">
     <nav id="sidebar" class="sidebar js-sidebar">
@@ -24,8 +23,7 @@ aq
             <a class="sidebar-brand" href="index.html"><span class="align-middle">INVOICELY</span></a>
             <ul class="sidebar-nav">
                 <li class="sidebar-item"><a class="sidebar-link" href="index.html"><i class="align-middle" data-feather="sliders"></i><span>Dashboard</span></a></li>
-                <li class="sidebar-item active"><a class="sidebar-link" href="invoices.html"><i class="align-middle" data-feather="file-text"></i><span>sales_Invoice List</span></a></li>
-                <li class="sidebar-item active"><a class="sidebar-link" href="Purchase_invoices.html"><i class="align-middle" data-feather="file-text"></i><span>Purchase_Invoice List</span></a></li>
+                <li class="sidebar-item active"><a class="sidebar-link" href="invoices.html"><i class="align-middle" data-feather="file-text"></i><span>Invoice List</span></a></li>
                 <li class="sidebar-item"><a class="sidebar-link" href="Purchase-Invoice.html"><i class="align-middle" data-feather="plus-circle"></i><span>Create Purchase Invoice</span></a></li>
                 <li class="sidebar-item"><a class="sidebar-link" href="Sales-Invoice.html"><i class="align-middle" data-feather="plus-circle"></i><span>Create Sales Invoice</span></a></li>
             </ul>
@@ -60,12 +58,12 @@ aq
                 <!-- Search and Table -->
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0">Sales Invoices</h5>
+                        <h5 class="card-title mb-0">Purchase Invoices</h5>
                         <small class="text-muted">Last Sync: <span id="lastSync">—</span></small>
                     </div>
                     <div class="card-body">
                         <div class="input-group mb-3">
-                            <input id="searchInput" type="text" class="form-control" placeholder="Search by Invoice No, Customer, or Date" />
+                            <input id="searchInput" type="text" class="form-control" placeholder="Search by Invoice No, Supplier, or Date" />
                             <button id="clearSearch" class="btn btn-outline-secondary">Clear</button>
                         </div>
 
@@ -75,7 +73,7 @@ aq
                                 <tr>
                                     <th>#</th>
                                     <th>Date</th>
-                                    <th>Customer</th>
+                                    <th>Supplier</th>
                                     <th>Total (₹)</th>
                                     <th>Status</th>
                                     <th class="text-end">Actions</th>
@@ -94,15 +92,15 @@ aq
 </div>
 
 <script>
-    const API_URL = "http://localhost:8080/api/sales"; // ✅ your Spring Boot API endpoint
+    const API_URL = "http://localhost:8080/api/purchases"; // ✅ Uses getAll() from PurchaseController
 
-    // 🔹 Fetch all invoices and sort by date descending
+    // Fetch all invoices and sort by date (latest first)
     async function fetchInvoices() {
         try {
             const response = await axios.get(API_URL);
             let invoices = response.data;
 
-            // 🔸 Sort by invoiceDate (latest first)
+            // Sort by invoiceDate descending
             invoices.sort((a, b) => new Date(b.invoiceDate) - new Date(a.invoiceDate));
 
             renderInvoices(invoices);
@@ -114,7 +112,7 @@ aq
         }
     }
 
-    // 🔹 Delete invoice
+    // Delete invoice
     async function deleteInvoice(id) {
         if (!confirm("Are you sure you want to delete this invoice?")) return;
         try {
@@ -127,7 +125,7 @@ aq
         }
     }
 
-    // 🔹 Render invoice list
+    // Render invoice list
     function renderInvoices(invoices) {
         const tbody = document.getElementById('invoiceTbody');
         tbody.innerHTML = "";
@@ -142,11 +140,11 @@ aq
                 <tr>
                     <td>${index + 1}</td>
                     <td>${inv.invoiceDate || '-'}</td>
-                    <td>${inv.customerName || '-'}</td>
+                    <td>${inv.supplierFirmName || '-'}</td>
                     <td class="text-end">₹${(inv.totalAmount || 0).toLocaleString('en-IN')}</td>
                     <td><span class="badge bg-success">Synced</span></td>
                     <td class="text-end">
-                        <a href="Sales-Invoice.html?id=${inv.id}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <a href="Purchase-Invoice.html?id=${inv.id}" class="btn btn-sm btn-outline-primary">Edit</a>
                         <button onclick="deleteInvoice(${inv.id})" class="btn btn-sm btn-outline-danger">Delete</button>
                     </td>
                 </tr>`;
@@ -154,31 +152,30 @@ aq
         });
     }
 
-    // 🔹 Search filter
+    // Search filter
     document.getElementById('searchInput').addEventListener('input', async (e) => {
         const query = e.target.value.toLowerCase();
         const res = await axios.get(API_URL);
         let filtered = res.data.filter(inv =>
-            inv.customerName?.toLowerCase().includes(query) ||
+            inv.supplierFirmName?.toLowerCase().includes(query) ||
             inv.invoiceNo?.toLowerCase().includes(query) ||
             inv.invoiceDate?.toLowerCase().includes(query)
         );
 
-        // 🔸 Sort filtered results also by date descending
         filtered.sort((a, b) => new Date(b.invoiceDate) - new Date(a.invoiceDate));
         renderInvoices(filtered);
     });
 
-    // 🔹 Clear search
+    // Clear search
     document.getElementById('clearSearch').addEventListener('click', () => {
         document.getElementById('searchInput').value = '';
         fetchInvoices();
     });
 
-    // 🔹 Sync Now Button
+    // Sync Now Button
     document.getElementById('syncNowBtn').addEventListener('click', fetchInvoices);
 
-    // 🔹 Initial load
+    // Initial load
     document.addEventListener('DOMContentLoaded', fetchInvoices);
 </script>
 </body>
