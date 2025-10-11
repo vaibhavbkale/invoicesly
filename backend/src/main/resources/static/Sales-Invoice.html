@@ -5,7 +5,6 @@
     <title>New Sales Bill – Invoicely</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="css/app.css" rel="stylesheet">
-    <!-- Axios CDN -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
@@ -16,41 +15,17 @@
                 <span class="align-middle">INVOICELY</span>
             </a>
             <ul class="sidebar-nav">
-                <li class="sidebar-item ">
-                    <a class="sidebar-link" href="index.html">
-                        <i class="align-middle" data-feather="sliders"></i>
-                        <span class="align-middle">Dashboard</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="invoices.html">
-                        <i class="align-middle" data-feather="file-text"></i>
-                        <span class="align-middle">Invoice List</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="Purchase-Invoice.html">
-                        <i class="align-middle" data-feather="plus-circle"></i>
-                        <span class="align-middle">Create Purchase Invoice</span>
-                    </a>
-                </li>
-                <li class="sidebar-item active">
-                    <a class="sidebar-link" href="Sales-Invoice.html">
-                        <i class="align-middle" data-feather="plus-circle"></i>
-                        <span class="align-middle">Create Sales Invoice</span>
-                    </a>
-                </li>
-                <li class="sidebar-item">
-                    <a class="sidebar-link" href="settings.html">
-                        <i class="align-middle" data-feather="settings"></i>
-                        <span class="align-middle">Settings</span>
-                    </a>
-                </li>
+                <li class="sidebar-item"><a class="sidebar-link" href="index.html">Dashboard</a></li>
+                <li class="sidebar-item"><a class="sidebar-link" href="Sales_invoices_List.html">Sales Invoice List</a></li>
+                <li class="sidebar-item"><a class="sidebar-link" href="Purchase_invoices_List.html">Purchase Invoice List</a></li>
+
+                <li class="sidebar-item"><a class="sidebar-link" href="Purchase-Invoice.html">Create Purchase Invoice</a></li>
+                <li class="sidebar-item active"><a class="sidebar-link" href="Sales-Invoice.html">Create Sales Invoice</a></li>
+                <li class="sidebar-item "><a class="sidebar-link" href="Settings.html">Settings</a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- Main Content -->
     <div class="main">
         <main class="content">
             <div class="container-fluid p-0">
@@ -62,11 +37,7 @@
                         <div class="row mb-4">
                             <div class="col-md-3">
                                 <label class="form-label">Invoice No.</label>
-                                <input type="text" id="invoiceNo" class="form-control" placeholder="01/25-26">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">e-Way Bill No.</label>
-                                <input type="text" id="ewayBillNo" class="form-control">
+                                <input type="text" id="invoiceNo" class="form-control" placeholder="INV-2025-010">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Date</label>
@@ -74,11 +45,11 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Vehicle No.</label>
-                                <input type="text" id="vehicleNo" class="form-control" placeholder="MH15WJ2878">
+                                <input type="text" id="vehicleNo" class="form-control" placeholder="MH12AB1234">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Driver Number</label>
-                                <input type="text" id="driverNo" class="form-control" placeholder="+91 000000000">
+                                <input type="text" id="driverNo" class="form-control" placeholder="9876543210">
                             </div>
                         </div>
 
@@ -105,8 +76,8 @@
                         <table class="table table-bordered" id="productTable">
                             <thead>
                             <tr>
-                                <th>Sl No.</th>
-                                <th>Description of Goods</th>
+                                <th>Sr No.</th>
+                                <th>Description</th>
                                 <th>HSN/SAC</th>
                                 <th>Quantity (kg)</th>
                                 <th>Rate (₹)</th>
@@ -118,43 +89,41 @@
                             <tbody id="itemTable">
                             <tr>
                                 <td>1</td>
-                                <td><input type="text" class="form-control desc" value="#"></td>
-                                <td><input type="text" class="form-control hsn" value="#"></td>
-                                <td><input type="number" class="form-control qty" value="#"></td>
-                                <td><input type="number" class="form-control rate" value=""></td>
-                                <td><input type="text" class="form-control nos" value=""></td>
+                                <td><input type="text" class="form-control desc"></td>
+                                <td><input type="text" class="form-control hsn"></td>
+                                <td><input type="number" class="form-control qty"></td>
+                                <td><input type="number" class="form-control rate"></td>
+                                <td><input type="number" class="form-control nos"></td>
                                 <td><input type="number" class="form-control disc" value="0"></td>
                                 <td><input type="text" class="form-control amount" readonly></td>
                             </tr>
                             </tbody>
                         </table>
-                        <div class="mb-3">
-                            <button type="button" class="btn btn-secondary" onclick="addRow()">+ Add Item</button>
-                        </div>
+                        <button type="button" class="btn btn-secondary mb-3" onclick="addRow()">+ Add Item</button>
 
                         <!-- Totals -->
                         <div class="row mb-3">
                             <div class="col-md-3">
                                 <label class="form-label">Round Off (₹)</label>
-                                <input type="number" id="roundOff" class="form-control" value="0.24">
+                                <input type="number" id="roundOff" class="form-control" value="0">
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label">Total</label>
-                                <input type="text" id="netTotal" class="form-control">
+                                <label class="form-label">Total (₹)</label>
+                                <input type="text" id="total" class="form-control" readonly>
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label">Received Amount (₹)</label>
-                                <input type="text" id="ReceivedAmount" class="form-control">
+                                <label class="form-label">Received (₹)</label>
+                                <input type="number" id="receivedAmount" class="form-control" value="0">
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label">Pending Amount (₹)</label>
-                                <input type="text" id="PendingAmount" class="form-control" readonly>
+                                <label class="form-label">Pending (₹)</label>
+                                <input type="text" id="pendingAmount" class="form-control" readonly>
                             </div>
                         </div>
 
-                        <div class="col-mb-3">
+                        <div class="mb-3">
                             <label class="form-label">Amount in Words</label>
-                            <input type="text" id="amountWords" class="form-control" readonly>
+                            <input type="text" id="amountInWords" class="form-control" readonly>
                         </div>
 
                         <div class="text-end mt-4">
@@ -171,121 +140,121 @@
 </div>
 
 <script>
+    // ➕ Add Item Row
     function addRow() {
-      let table = document.getElementById("itemTable");
-      let rowCount = table.rows.length;
-      let row = table.insertRow();
-      row.innerHTML = `
-        <td>${rowCount + 1}</td>
-        <td><input type="text" class="form-control desc"></td>
-        <td><input type="text" class="form-control hsn"></td>
-        <td><input type="number" class="form-control qty"></td>
-        <td><input type="number" class="form-control rate"></td>
-        <td><input type="text" class="form-control nos"></td>
-        <td><input type="number" class="form-control disc" value="0"></td>
-        <td><input type="text" class="form-control amount" readonly></td>
-      `;
+        const table = document.getElementById("itemTable");
+        const rowCount = table.rows.length;
+        const row = table.insertRow();
+        row.innerHTML = `
+            <td>${rowCount + 1}</td>
+            <td><input type="text" class="form-control desc"></td>
+            <td><input type="text" class="form-control hsn"></td>
+            <td><input type="number" class="form-control qty"></td>
+            <td><input type="number" class="form-control rate"></td>
+            <td><input type="number" class="form-control nos"></td>
+            <td><input type="number" class="form-control disc" value="0"></td>
+            <td><input type="text" class="form-control amount" readonly></td>
+        `;
     }
 
+    // 🧮 Calculate Totals
     function calculateTotals() {
-      let rows = document.querySelectorAll("#itemTable tr");
-      let grandTotal = 0;
+        let total = 0;
+        document.querySelectorAll("#itemTable tr").forEach(row => {
+            const qty = parseFloat(row.querySelector(".qty")?.value) || 0;
+            const rate = parseFloat(row.querySelector(".rate")?.value) || 0;
+            const disc = parseFloat(row.querySelector(".disc")?.value) || 0;
+            let amount = qty * rate;
+            amount -= (amount * disc) / 100;
+            row.querySelector(".amount").value = amount.toFixed(2);
+            total += amount;
+        });
 
-      rows.forEach(row => {
-        let qty = parseFloat(row.querySelector(".qty")?.value) || 0;
-        let rate = parseFloat(row.querySelector(".rate")?.value) || 0;
-        let disc = parseFloat(row.querySelector(".disc")?.value) || 0;
+        const roundOff = parseFloat(document.getElementById("roundOff").value) || 0;
+        const grandTotal = total + roundOff;
+        document.getElementById("total").value = grandTotal.toFixed(2);
 
-        let amount = qty * rate;
-        let discount = (amount * disc) / 100;
-        let finalAmount = amount - discount;
-
-        if(row.querySelector(".amount")){
-          row.querySelector(".amount").value = finalAmount.toFixed(2);
-        }
-        grandTotal += finalAmount;
-      });
-
-      let roundOff = parseFloat(document.getElementById("roundOff").value) || 0;
-      let netTotal = grandTotal + roundOff;
-      document.getElementById("netTotal").value = netTotal.toFixed(2);
-
-      let received = parseFloat(document.getElementById("ReceivedAmount").value) || 0;
-      document.getElementById("PendingAmount").value = (netTotal - received).toFixed(2);
-      document.getElementById("amountWords").value = convertNumberToWords(netTotal);
+        const received = parseFloat(document.getElementById("receivedAmount").value) || 0;
+        document.getElementById("pendingAmount").value = (grandTotal - received).toFixed(2);
+        document.getElementById("amountInWords").value = convertNumberToWords(grandTotal);
     }
 
+    // 🔢 Convert number to words
     function convertNumberToWords(amount) {
-      const words = ["Zero","One","Two","Three","Four","Five","Six","Seven","Eight","Nine",
-        "Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
-      const tens = ["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
-
-      function inWords(num) {
-        if (num < 20) return words[num];
-        if (num < 100) return tens[Math.floor(num/10)] + (num%10 ? " " + words[num%10] : "");
-        if (num < 1000) return words[Math.floor(num/100)] + " Hundred " + (num%100 ? inWords(num%100) : "");
-        if (num < 100000) return inWords(Math.floor(num/1000)) + " Thousand " + (num%1000 ? inWords(num%1000) : "");
-        if (num < 10000000) return inWords(Math.floor(num/100000)) + " Lakh " + (num%100000 ? inWords(num%100000) : "");
-        return num;
-      }
-      return "INR " + inWords(Math.floor(amount)) + " Only";
+        const words = ["Zero","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
+        const tens = ["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
+        function inWords(num) {
+            if (num < 20) return words[num];
+            if (num < 100) return tens[Math.floor(num/10)] + (num%10 ? " " + words[num%10] : "");
+            if (num < 1000) return words[Math.floor(num/100)] + " Hundred " + (num%100 ? inWords(num%100) : "");
+            if (num < 100000) return inWords(Math.floor(num/1000)) + " Thousand " + (num%1000 ? inWords(num%1000) : "");
+            if (num < 10000000) return inWords(Math.floor(num/100000)) + " Lakh " + (num%100000 ? inWords(num%100000) : "");
+            return num;
+        }
+        return inWords(Math.floor(amount)) + " Rupees Only";
     }
 
+    // 🖨️ Print Bill
     function printBill() {
-      var printContents = document.getElementById("printArea").innerHTML;
-      var originalContents = document.body.innerHTML;
-      document.body.innerHTML = printContents;
-      window.print();
-      document.body.innerHTML = originalContents;
-      location.reload();
+        const printContents = document.getElementById("printArea").innerHTML;
+        const originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+        location.reload();
     }
 
-    // ✅ Save Invoice using Axios
+    // 💾 Save Invoice
     function saveInvoice() {
-      calculateTotals(); // ensure totals are calculated
+        calculateTotals();
 
-      let invoice = {
-        invoiceNo: document.getElementById("invoiceNo").value,
-        ewayBillNo: document.getElementById("ewayBillNo").value,
-        invoiceDate: document.getElementById("invoiceDate").value,
-        vehicleNo: document.getElementById("vehicleNo").value,
-        driverNo: document.getElementById("driverNo").value,
-        supplierFirmName: document.getElementById("supplierFirmName").value,
-        supplierContactNo: document.getElementById("supplierContactNo").value,
-        supplierAddress: document.getElementById("supplierAddress").value,
-        supplierGstin: document.getElementById("supplierGstin").value,
-        customerName: document.getElementById("customerName").value,
-        customerContactNo: document.getElementById("customerContactNo").value,
-        customerAddress: document.getElementById("customerAddress").value,
-        customerGstin: document.getElementById("customerGstin").value,
-        roundOff: document.getElementById("roundOff").value,
-        netTotal: document.getElementById("netTotal").value,
-        receivedAmount: document.getElementById("ReceivedAmount").value,
-        pendingAmount: document.getElementById("PendingAmount").value,
-        items: []
-      };
+        const invoice = {
+            invoiceNo: document.getElementById("invoiceNo").value,
+            invoiceDate: document.getElementById("invoiceDate").value,
+            vehicleNo: document.getElementById("vehicleNo").value,
+            driverNo: document.getElementById("driverNo").value,
+            supplierFirmName: document.getElementById("supplierFirmName").value,
+            supplierContactNo: document.getElementById("supplierContactNo").value,
+            supplierAddress: document.getElementById("supplierAddress").value,
+            supplierGstin: document.getElementById("supplierGstin").value,
+            customerName: document.getElementById("customerName").value,
+            customerContactNo: document.getElementById("customerContactNo").value,
+            customerAddress: document.getElementById("customerAddress").value,
+            customerGstin: document.getElementById("customerGstin").value,
+            roundOff: parseFloat(document.getElementById("roundOff").value) || 0,
+            total: parseFloat(document.getElementById("total").value) || 0,
+            receivedAmount: parseFloat(document.getElementById("receivedAmount").value) || 0,
+            pendingAmount: parseFloat(document.getElementById("pendingAmount").value) || 0,
+            amountInWords: document.getElementById("amountInWords").value,
+            items: []
+        };
 
-      document.querySelectorAll("#itemTable tr").forEach(row => {
-        invoice.items.push({
-          description: row.querySelector(".desc")?.value || "",
-          hsn: row.querySelector(".hsn")?.value || "",
-          qty: parseFloat(row.querySelector(".qty")?.value) || 0,
-          rate: parseFloat(row.querySelector(".rate")?.value) || 0,
-          nos: row.querySelector(".nos")?.value || "",
-          disc: parseFloat(row.querySelector(".disc")?.value) || 0,
-          amount: parseFloat(row.querySelector(".amount")?.value) || 0
+        // Collect items
+        document.querySelectorAll("#itemTable tr").forEach((row, i) => {
+            invoice.items.push({
+                srNo: i + 1,
+                description: row.querySelector(".desc")?.value || "",
+                hsnSac: row.querySelector(".hsn")?.value || "",
+                quantityKg: parseFloat(row.querySelector(".qty")?.value) || 0,
+                rate: parseFloat(row.querySelector(".rate")?.value) || 0,
+                nos: parseInt(row.querySelector(".nos")?.value) || 0,
+                discPercent: parseFloat(row.querySelector(".disc")?.value) || 0,
+                amount: parseFloat(row.querySelector(".amount")?.value) || 0
+            });
         });
-      });
 
-      axios.post("http://localhost:8080/api/sales", invoice)
-        .then(res => {
-          alert("✅ Invoice saved successfully!");
-          console.log(res.data);
-        })
-        .catch(err => {
-          console.error(err);
-          alert("❌ Failed to save invoice!");
-        });
+        invoice.itemsJson = JSON.stringify(invoice.items);
+
+        axios.post("http://localhost:8080/api/sales", invoice)
+            .then(res => {
+                alert("✅ Invoice saved successfully!");
+                console.log(res.data);
+                setTimeout(() => location.reload(), 1500);
+            })
+            .catch(err => {
+                console.error(err);
+                alert("❌ Failed to save invoice!");
+            });
     }
 </script>
 </body>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Invoicely • Purchase Invoice List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/app.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        .pointer { cursor: pointer; }
+        .table-small td, .table-small th { padding: .5rem .6rem; }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+    <nav id="sidebar" class="sidebar js-sidebar">
+        <div class="sidebar-content js-simplebar">
+            <a class="sidebar-brand" href="index.html">
+                <span class="align-middle">INVOICELY</span>
+            </a>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="index.html">
+                        <i class="align-middle" data-feather="sliders"></i>
+                        <span class="align-middle">Dashboard</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="Sales_invoices_List.html">
+                        <i class="align-middle" data-feather="file-text"></i>
+                        <span class="align-middle">Sales Invoice List</span>
+                    </a>
+                </li>
+                <li class="sidebar-item active">
+                    <a class="sidebar-link" href="Purchase_invoices_List.html">
+                        <i class="align-middle" data-feather="file-text"></i>
+                        <span class="align-middle">Purchase Invoice List</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="Purchase-Invoice.html">
+                        <i class="align-middle" data-feather="plus-circle"></i>
+                        <span class="align-middle">Create Purchase Invoice</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="Sales-Invoice.html">
+                        <i class="align-middle" data-feather="plus-circle"></i>
+                        <span class="align-middle">Create Sales Invoice</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="settings.html">
+                        <i class="align-middle" data-feather="settings"></i>
+                        <span class="align-middle">Settings</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="sidebar-cta">
+                <div class="sidebar-cta-content">
+                    <strong class="d-inline-block mb-2">Offline-first</strong>
+                    <div class="mb-2 text-sm">Works offline. Sync when you're back online.</div>
+                    <div class="small text-muted">Last Sync: <span id="lastSyncSide">—</span></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div class="main">
+        <main class="content">
+            <div class="container-fluid p-0">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h1 class="h3 mb-0"><strong>Purchase Invoice List</strong></h1>
+                    <a href="Purchase-Invoice.html" class="btn btn-success">+ New Purchase Invoice</a>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="input-group mb-3">
+                            <input id="searchInput" type="text" class="form-control" placeholder="Search by Invoice No, Supplier, or Date" />
+                            <button id="clearSearch" class="btn btn-outline-secondary">Clear</button>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="table table-striped align-middle" id="invoiceTable">
+                                <thead class="table-dark">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Date</th>
+                                    <th>Supplier</th>
+                                    <th>Net Total (₹)</th>
+                                    <th>Status</th>
+                                    <th class="text-end">Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody id="invoiceTbody">
+                                <tr><td colspan="6" class="text-center">Loading invoices...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+    const API_URL = "http://localhost:8080/api/purchases";
+
+    async function fetchInvoices() {
+        try {
+            const res = await axios.get(API_URL);
+            const invoices = res.data.sort((a,b)=> new Date(b.invoiceDate) - new Date(a.invoiceDate));
+            renderInvoices(invoices);
+        } catch(err) {
+            console.error(err);
+            document.getElementById('invoiceTbody').innerHTML = `<tr><td colspan="6" class="text-danger text-center">Failed to load invoices.</td></tr>`;
+        }
+    }
+
+    function renderInvoices(invoices) {
+        const tbody = document.getElementById('invoiceTbody');
+        tbody.innerHTML = "";
+        if(invoices.length===0){
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">No invoices found</td></tr>`;
+            return;
+        }
+        invoices.forEach((inv, i)=>{
+            tbody.insertAdjacentHTML('beforeend', `
+                <tr>
+                    <td>${i+1}</td>
+                    <td>${inv.invoiceDate || '-'}</td>
+                    <td>${inv.supplierFirmOwnerName || '-'}</td>
+                    <td class="text-end">₹${(inv.finalNetTotal || 0).toLocaleString('en-IN')}</td>
+                    <td><span class="badge bg-success">Synced</span></td>
+                    <td class="text-end">
+                        <a href="Purchase_invoice_update.html?id=${inv.id}" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <button onclick="deleteInvoice(${inv.id})" class="btn btn-sm btn-outline-danger">Delete</button>
+                    </td>
+                </tr>
+            `);
+        });
+    }
+
+    async function deleteInvoice(id){
+        if(!confirm("Are you sure you want to delete this invoice?")) return;
+        try{
+            await axios.delete(`${API_URL}/${id}`);
+            alert("Invoice deleted successfully!");
+            fetchInvoices();
+        }catch(err){
+            console.error(err);
+            alert("Failed to delete invoice.");
+        }
+    }
+
+    document.getElementById('searchInput').addEventListener('input', async (e)=>{
+        const query = e.target.value.toLowerCase();
+        const res = await axios.get(API_URL);
+        const filtered = res.data.filter(inv =>
+            inv.supplierFirmOwnerName?.toLowerCase().includes(query) ||
+            inv.invoiceNumber?.toLowerCase().includes(query) ||
+            inv.invoiceDate?.toLowerCase().includes(query)
+        );
+        renderInvoices(filtered.sort((a,b)=> new Date(b.invoiceDate) - new Date(a.invoiceDate)));
+    });
+
+    document.getElementById('clearSearch').addEventListener('click', ()=>{
+        document.getElementById('searchInput').value = '';
+        fetchInvoices();
+    });
+
+    document.addEventListener('DOMContentLoaded', fetchInvoices);
+</script>
+</body>
+</html>

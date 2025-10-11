@@ -14,7 +14,8 @@
             <a class="sidebar-brand" href="index.html"><span class="align-middle">INVOICELY</span></a>
             <ul class="sidebar-nav">
                 <li class="sidebar-item"><a class="sidebar-link" href="index.html">Dashboard</a></li>
-                <li class="sidebar-item"><a class="sidebar-link" href="invoices.html">Invoice List</a></li>
+                <li class="sidebar-item"><a class="sidebar-link" href="Sales_invoices_List.html">Sales Invoice List</a></li>
+                <li class="sidebar-item"><a class="sidebar-link" href="Purchase_invoices_List.html">Purchase Invoice List</a></li>
                 <li class="sidebar-item active"><a class="sidebar-link" href="Purchase-Invoice.html">Create Purchase Invoice</a></li>
                 <li class="sidebar-item"><a class="sidebar-link" href="Sales-Invoice.html">Create Sales Invoice</a></li>
                 <li class="sidebar-item"><a class="sidebar-link" href="settings.html">Settings</a></li>
@@ -219,9 +220,7 @@
             supplierFirmOwnerName: document.getElementById("supplierName").value,
             supplierMobile: document.getElementById("supplierMobile").value,
             supplierAddress: document.getElementById("supplierAddress").value,
-            companyName: document.getElementById("companyName").value,
-            companyMobile: document.getElementById("companyMobile").value,
-            companyAddress: document.getElementById("companyAddress").value,
+            companyId: null, // optional field
             sgst: parseFloat(document.getElementById("sgst").value) || 0,
             cgst: parseFloat(document.getElementById("cgst").value) || 0,
             weightShortageAmount: parseFloat(document.getElementById("shortageAmt").value) || 0,
@@ -231,7 +230,6 @@
             vehicleNumber: document.getElementById("vehicleNo").value,
             driverContactNumber: document.getElementById("driverMobile").value,
             driverName: document.getElementById("driverName").value,
-            items: items,
             itemsJson: JSON.stringify(items)
         };
 
