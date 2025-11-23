@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Bill of Supply</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+}
+h2 {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+.main-invoice {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #444;
+}
+.main-invoice td {
+    border: 1px solid #444;
+    padding: 0;
+}
+.items {
+    width: 100%;
+    border-collapse: collapse;
+}
+.items th, .items td {
+    border: 1px solid #444;
+    padding: 4px;
+    text-align: left;
+}
+.items th {
+    background: #f2f2f2;
+    text-align: center;
+}
+.center { text-align: center; }
+.right { text-align: right; }
+.info-label {
+    font-weight: bold;
+    border: 1px solid #444;
+    padding: 3px;
+}
+.info-value {
+    border: 1px solid #444;
+    padding: 3px;
+}
+.tax-summary {
+    width: 100%;
+    border-collapse: collapse;
+}
+.tax-summary th, .tax-summary td {
+    border: 1px solid #444;
+    padding: 4px;
+    text-align: right;
+}
+.tax-summary th {
+    background: #f9f9f9;
+}
+</style>
+</head>
+
+<body>
+<h2 style="text-align:center;">Bill of Supply</h2>
+
+<table class="main-invoice">
+
+    <!-- Row 1: Supplier + Invoice Info -->
+    <tr>
+        <!-- LEFT: Supplier/Buyer -->
+        <td style="width:50%; padding:0;">
+            <table style="width:100%; border-collapse:collapse;">
+                <tr>
+                    <td style="padding:5px;">
+                        <div style="font-size:1.1em; font-weight:bold;">Supplier Firm Name</div>
+                        <div>Supplier Address</div>
+                        <div><b>GSTIN/UIN:</b> XXXXXXXX</div>
+                        <div>State Name: Maharashtra, Code: 27</div>
+                        <div>E-Mail: supplier@email.com</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:5px;">
+                        <div style="font-weight:bold;">Consignee (Ship to)</div>
+                        <div><b>Customer Name</b></div>
+                        <div>Customer Address</div>
+                        <div><b>GSTIN/UIN:</b> YYYYYYYY</div>
+                        <div>State Name: Maharashtra, Code: 27</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:5px;">
+                        <div style="font-weight:bold;">Buyer (Bill to)</div>
+                        <div><b>Customer Name</b></div>
+                        <div>Customer Address</div>
+                        <div><b>GSTIN/UIN:</b> ZZZZZZZZ</div>
+                        <div>State Name: Maharashtra, Code: 27</div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+
+        <!-- RIGHT: Invoice Info -->
+        <td style="width:50%; padding:0;">
+            <table style="width:100%; border-collapse:collapse;">
+                <tr>
+                    <td class="info-label">Invoice No.</td><td class="info-value">INV-001</td>
+                    <td class="info-label">e-Way Bill No.</td><td class="info-value"></td>
+                    <td class="info-label">Dated</td><td class="info-value">22-10-2025</td>
+                </tr>
+                <tr>
+                    <td class="info-label">Delivery Note</td><td class="info-value"></td>
+                    <td class="info-label">Mode/Terms of Payment</td><td class="info-value"></td>
+                    <td class="info-label">Other References</td><td class="info-value"></td>
+                </tr>
+                <tr>
+                    <td class="info-label">Reference No.</td><td class="info-value"></td>
+                    <td class="info-label">Buyer’s Order No.</td><td class="info-value"></td>
+                    <td class="info-label">Dated</td><td class="info-value"></td>
+                </tr>
+                <tr>
+                    <td class="info-label">Dispatch Doc No.</td><td class="info-value">INV-001</td>
+                    <td class="info-label">Delivery Note Date</td><td class="info-value"></td>
+                    <td class="info-label">Vehicle No.</td><td class="info-value">MH12AB1234</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    <!-- Row 2: Items -->
+    <tr>
+        <td colspan="2" style="padding:0;">
+            <table class="items">
+                <thead>
+                    <tr>
+                        <th>Sl No.</th>
+                        <th>Description of Goods</th>
+                        <th>HSN/SAC</th>
+                        <th>Quantity</th>
+                        <th>Rate (₹)</th>
+                        <th>Disc %</th>
+                        <th>Amount (₹)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="center">1</td>
+                        <td>Sugar Grade A</td>
+                        <td class="center">17011410</td>
+                        <td class="right">100 kg</td>
+                        <td class="right">₹ 40.00</td>
+                        <td class="right">0</td>
+                        <td class="right">₹ 4000.00</td>
+                    </tr>
+                    <tr>
+                        <td colspan="7" style="padding:3px;"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"></td>
+                        <td class="right"><b>100 kg</b></td>
+                        <td colspan="3">
+                            <table style="width:100%; border-collapse:collapse;">
+                                <tr><td class="info-label">Expenses</td><td class="info-value">0.00</td></tr>
+                                <tr><td class="info-label">Round Off</td><td class="info-value">0.00</td></tr>
+                                <tr><td class="info-label" style="background:#efefef;">Total</td><td class="info-value" style="background:#efefef;"><b>₹ 4000.00</b></td></tr>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+
+    <!-- Row 3: Footer -->
+    <tr>
+        <td colspan="2" style="padding:0;">
+            <table style="width:100%; border-collapse:collapse;">
+                <tr>
+                    <td style="width:70%; border-right:1px solid #444; padding:5px;">
+                        <b>Amount Chargeable (in words)</b>
+                        <div><b>INR Four Thousand Only</b></div>
+                    </td>
+                    <td style="width:30%; text-align:right;">E &amp; O E</td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="padding:0;">
+                        <table class="tax-summary">
+                            <thead>
+                                <tr>
+                                    <th>HSN/SAC</th>
+                                    <th>Taxable Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td class="center">17011410</td><td class="right">₹ 4000.00</td></tr>
+                                <tr><td class="center"><b>Total</b></td><td class="right"><b>₹ 4000.00</b></td></tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:5px;">
+                        <b>Tax Amount (in words):</b> NIL
+                        <div style="margin-top:10px;"><b>Declaration:</b> We declare that this invoice shows the actual price of the goods described.</div>
+                    </td>
+                    <td style="text-align:right; padding:5px;">
+                        <div style="padding-top:20px; font-weight:bold;">for Supplier Firm Name</div>
+                        <div style="margin-top:30px; border-top:1px solid #444; padding-top:5px;">Authorised Signatory</div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+</table>
+
+<div style="text-align:center; font-size:10px; margin-top:5px;">
+    This is a Computer Generated Invoice
+</div>
+
+</body>
+</html>

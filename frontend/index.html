@@ -13,27 +13,61 @@
   <link href="css/app.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
   <style>
-    .sync-indicator { display: inline-flex; align-items: center; gap: .35rem; padding: .25rem .6rem; border-radius: 999px; font-size: .8rem; }
-    .status-dot { width: .5rem; height: .5rem; border-radius: 999px; display: inline-block; }
-    .status-online { background: #28a745; }
-    .status-offline { background: #dc3545; }
-    .badge-pill { border-radius: 999px; }
-    .table-small td, .table-small th { padding: .5rem .6rem; }
-    .pointer { cursor: pointer; }
-    .search-wrap { display: grid; grid-template-columns: 1fr auto; gap: .75rem; }
+    .sync-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      padding: .25rem .6rem;
+      border-radius: 999px;
+      font-size: .8rem;
+    }
+
+    .status-dot {
+      width: .5rem;
+      height: .5rem;
+      border-radius: 999px;
+      display: inline-block;
+    }
+
+    .status-online {
+      background: #28a745;
+    }
+
+    .status-offline {
+      background: #dc3545;
+    }
+
+    .badge-pill {
+      border-radius: 999px;
+    }
+
+    .table-small td,
+    .table-small th {
+      padding: .5rem .6rem;
+    }
+
+    .pointer {
+      cursor: pointer;
+    }
+
+    .search-wrap {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: .75rem;
+    }
   </style>
 </head>
 
 <body>
-  
- <div class="wrapper">
+
+  <div class="wrapper">
     <nav id="sidebar" class="sidebar js-sidebar">
       <div class="sidebar-content js-simplebar">
         <a class="sidebar-brand" href="index.html">
           <span class="align-middle">INVOICELY</span>
         </a>
         <ul class="sidebar-nav">
-        
+
           <li class="sidebar-item active ">
             <a class="sidebar-link" href="index.html">
               <i class="align-middle" data-feather="sliders"></i>
@@ -46,12 +80,12 @@
               <span class="align-middle">Sales Invoice List</span>
             </a>
           </li>
-            <li class="sidebar-item">
+          <li class="sidebar-item">
             <a class="sidebar-link" href="Purchase_invoices_List.html">
-                <i class="align-middle" data-feather="file-text"></i>
-                <span class="align-middle">Purchase Invoice List</span>
+              <i class="align-middle" data-feather="file-text"></i>
+              <span class="align-middle">Purchase Invoice List</span>
             </a>
-        </li>
+          </li>
 
           <li class="sidebar-item">
             <a class="sidebar-link" href="Purchase-Invoice.html">
@@ -60,7 +94,7 @@
             </a>
           </li>
 
-           <li class="sidebar-item">
+          <li class="sidebar-item">
             <a class="sidebar-link" href="Sales-Invoice.html">
               <i class="align-middle" data-feather="plus-circle"></i>
               <span class="align-middle">Create Sales Invoice</span>
@@ -84,7 +118,7 @@
     </nav>
 
     <div class="main">
-      
+
       <nav class="navbar navbar-expand navbar-light navbar-bg">
         <a class="sidebar-toggle js-sidebar-toggle"><i class="hamburger align-self-center"></i></a>
         <div class="navbar-collapse collapse">
@@ -122,44 +156,44 @@
           </div>
 
 
-    <!-- ✅ Metrics Cards Row (added) -->
-    <div class="row mb-4">
-      <div class="col-sm-6 col-xl-3">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Total Invoices</h5>
-            <h2 class="mb-0" id="totalInvoices">0</h2>
+          <!-- ✅ Metrics Cards Row (added) -->
+          <div class="row mb-4">
+            <div class="col-sm-6 col-xl-3">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Total Invoices</h5>
+                  <h2 class="mb-0" id="totalInvoices">0</h2>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Pending Sync</h5>
+                  <h2 class="mb-0" id="pendingInvoices">0</h2>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Revenue</h5>
+                  <h2 class="mb-0" id="revenueSum">0</h2>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-xl-3">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Drafts</h5>
+                  <h2 class="mb-0" id="draftCount">0</h2>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <div class="col-sm-6 col-xl-3">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Pending Sync</h5>
-            <h2 class="mb-0" id="pendingInvoices">0</h2>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-6 col-xl-3">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Revenue</h5>
-            <h2 class="mb-0" id="revenueSum">0</h2>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-6 col-xl-3">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Drafts</h5>
-            <h2 class="mb-0" id="draftCount">0</h2>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- ✅ End Metrics Row -->
+          <!-- ✅ End Metrics Row -->
 
-          
+
           <!-- Search + Recent Invoices -->
           <div class="row">
             <div class="col-lg-8 d-flex">
@@ -170,7 +204,8 @@
                 </div>
                 <div class="card-body">
                   <div class="search-wrap mb-3">
-                    <input id="searchInput" type="search" class="form-control" placeholder="Search by number, client or date (YYYY-MM-DD)" />
+                    <input id="searchInput" type="search" class="form-control"
+                      placeholder="Search by number, client or date (YYYY-MM-DD)" />
                     <button id="clearSearch" class="btn btn-outline-secondary">Clear</button>
                   </div>
                   <div class="table-responsive">
@@ -245,7 +280,8 @@
           <div class="row text-muted">
             <div class="col-6 text-start">
               <p class="mb-0">
-                <a class="text-muted" href="#" target="_blank"><strong>Invoicely</strong></a> — Offline Invoice App &copy;
+                <a class="text-muted" href="#" target="_blank"><strong>Invoicely</strong></a> — Offline Invoice App
+                &copy;
               </p>
             </div>
             <div class="col-6 text-end">
@@ -271,11 +307,11 @@
       const today = new Date();
       const fmt = (d) => d.toISOString().slice(0, 10);
       const demo = [
-        { id: 'INV-001', date: fmt(new Date(today.getFullYear(), today.getMonth(), today.getDate()-1)), client: 'Acme Pvt Ltd', total: 15450, status: 'Synced', synced: true },
-        { id: 'INV-002', date: fmt(new Date(today.getFullYear(), today.getMonth(), today.getDate()-2)), client: 'Globex', total: 8999, status: 'Pending Sync', synced: false },
-        { id: 'INV-003', date: fmt(new Date(today.getFullYear(), today.getMonth(), today.getDate()-5)), client: 'Initech', total: 1200, status: 'Draft', synced: false },
-        { id: 'INV-004', date: fmt(new Date(today.getFullYear(), today.getMonth()-1, 12)), client: 'Wayne Enterprises', total: 22000, status: 'Synced', synced: true },
-        { id: 'INV-005', date: fmt(new Date(today.getFullYear(), today.getMonth()-2, 26)), client: 'Hooli', total: 5400, status: 'Synced', synced: true },
+        { id: 'INV-001', date: fmt(new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1)), client: 'Acme Pvt Ltd', total: 15450, status: 'Synced', synced: true },
+        { id: 'INV-002', date: fmt(new Date(today.getFullYear(), today.getMonth(), today.getDate() - 2)), client: 'Globex', total: 8999, status: 'Pending Sync', synced: false },
+        { id: 'INV-003', date: fmt(new Date(today.getFullYear(), today.getMonth(), today.getDate() - 5)), client: 'Initech', total: 1200, status: 'Draft', synced: false },
+        { id: 'INV-004', date: fmt(new Date(today.getFullYear(), today.getMonth() - 1, 12)), client: 'Wayne Enterprises', total: 22000, status: 'Synced', synced: true },
+        { id: 'INV-005', date: fmt(new Date(today.getFullYear(), today.getMonth() - 2, 26)), client: 'Hooli', total: 5400, status: 'Synced', synced: true },
         { id: 'INV-006', date: fmt(new Date(today.getFullYear(), today.getMonth(), today.getDate())), client: 'Stark Industries', total: 32000, status: 'Pending Sync', synced: false }
       ];
       localStorage.setItem(LS_KEYS.invoices, JSON.stringify(demo));
@@ -286,7 +322,7 @@
     function saveInvoices(arr) { localStorage.setItem(LS_KEYS.invoices, JSON.stringify(arr)); }
 
     // --- UI helpers ---
-    function formatINR(n) { return (n||0).toLocaleString('en-IN', { maximumFractionDigits: 2 }); }
+    function formatINR(n) { return (n || 0).toLocaleString('en-IN', { maximumFractionDigits: 2 }); }
     function setText(id, text) { const el = document.getElementById(id); if (el) el.textContent = text; }
 
     // --- Online/Offline ---
@@ -315,7 +351,7 @@
       const total = list.length;
       const pending = list.filter(i => !i.synced && i.status !== 'Draft').length;
       const drafts = list.filter(i => i.status === 'Draft').length;
-      const revenue = list.filter(i => i.status !== 'Draft').reduce((s,i)=> s + (Number(i.total)||0), 0);
+      const revenue = list.filter(i => i.status !== 'Draft').reduce((s, i) => s + (Number(i.total) || 0), 0);
       return { total, pending, drafts, revenue };
     }
 
@@ -382,27 +418,27 @@
       const byMonth = new Array(12).fill(0);
       list.forEach(inv => {
         const m = new Date(inv.date).getMonth();
-        byMonth[m] += Number(inv.total)||0;
+        byMonth[m] += Number(inv.total) || 0;
       });
       return byMonth.map(v => Math.round(v));
     }
 
     function renderCharts(list) {
-      const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
       // Bar chart: monthly totals
       new Chart(document.getElementById('chartjs-dashboard-bar'), {
         type: 'bar',
         data: { labels: months, datasets: [{ label: 'Totals (₹)', backgroundColor: window.theme.primary, borderColor: window.theme.primary, data: buildMonthlyData(list), barPercentage: .75, categoryPercentage: .5 }] },
-        options: { maintainAspectRatio: false, legend: { display: false }, scales: { yAxes: [{ gridLines: { display: false }, ticks: { callback: (v)=>'₹'+v.toLocaleString('en-IN') } }], xAxes: [{ gridLines: { color: 'transparent' } }] } }
+        options: { maintainAspectRatio: false, legend: { display: false }, scales: { yAxes: [{ gridLines: { display: false }, ticks: { callback: (v) => '₹' + v.toLocaleString('en-IN') } }], xAxes: [{ gridLines: { color: 'transparent' } }] } }
       });
 
       // Pie chart: status distribution
-      const draft = list.filter(i=>i.status==='Draft').length;
-      const pending = list.filter(i=>!i.synced && i.status!=='Draft').length;
-      const synced = list.filter(i=>i.synced).length;
+      const draft = list.filter(i => i.status === 'Draft').length;
+      const pending = list.filter(i => !i.synced && i.status !== 'Draft').length;
+      const synced = list.filter(i => i.synced).length;
       new Chart(document.getElementById('chartjs-dashboard-pie'), {
         type: 'pie',
-        data: { labels: ['Draft','Pending Sync','Synced'], datasets: [{ data: [draft, pending, synced], backgroundColor: [window.theme.warning, window.theme.info, window.theme.success], borderWidth: 5 }] },
+        data: { labels: ['Draft', 'Pending Sync', 'Synced'], datasets: [{ data: [draft, pending, synced], backgroundColor: [window.theme.warning, window.theme.info, window.theme.success], borderWidth: 5 }] },
         options: { responsive: !window.MSInputMethodContext, maintainAspectRatio: false, legend: { display: true }, cutoutPercentage: 60 }
       });
     }
@@ -432,19 +468,19 @@
       const filtered = applySearch(full);
       const metrics = computeMetrics(full);
       renderTopCards(metrics);
-      renderRecentTable(filtered.sort((a,b)=> new Date(b.date) - new Date(a.date)));
+      renderRecentTable(filtered.sort((a, b) => new Date(b.date) - new Date(a.date)));
       if (!chartsDrawn) { renderCharts(full); chartsDrawn = true; }
       const lastSync = localStorage.getItem(LS_KEYS.lastSync);
       setText('lastSyncTop', lastSync ? new Date(lastSync).toLocaleString() : '—');
       setText('lastSyncSide', lastSync ? new Date(lastSync).toLocaleString() : '—');
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       // seed
       seedIfEmpty();
       // theme
       applyTheme();
-      document.getElementById('themeToggle').addEventListener('click', ()=>{
+      document.getElementById('themeToggle').addEventListener('click', () => {
         const current = localStorage.getItem(LS_KEYS.theme) || 'light';
         const next = current === 'light' ? 'dark' : 'light';
         localStorage.setItem(LS_KEYS.theme, next);
@@ -452,7 +488,7 @@
       });
       // search listeners
       document.getElementById('searchInput').addEventListener('input', refreshAll);
-      document.getElementById('clearSearch').addEventListener('click', ()=>{ document.getElementById('searchInput').value=''; refreshAll(); });
+      document.getElementById('clearSearch').addEventListener('click', () => { document.getElementById('searchInput').value = ''; refreshAll(); });
       // sync btn
       document.getElementById('syncNowBtn').addEventListener('click', syncNow);
       // first paint
@@ -461,4 +497,5 @@
     });
   </script>
 </body>
+
 </html>

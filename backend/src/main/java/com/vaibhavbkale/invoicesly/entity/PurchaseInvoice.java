@@ -38,6 +38,7 @@ public class PurchaseInvoice {
     // product list stored as JSON text
     @Lob
     @Column(name = "items_json", columnDefinition = "TEXT")
+
     private String itemsJson;
 
     @Transient
@@ -57,7 +58,7 @@ public class PurchaseInvoice {
     private String vehicleNumber;
     private String driverContactNumber;
     private String driverName;
-
+    private String amountInWords;
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @PrePersist

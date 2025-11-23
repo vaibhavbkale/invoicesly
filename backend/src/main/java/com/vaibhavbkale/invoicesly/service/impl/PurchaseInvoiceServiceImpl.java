@@ -30,7 +30,8 @@ public class PurchaseInvoiceServiceImpl implements PurchaseInvoiceService {
 
     @Override
     public PurchaseInvoice update(Long id, PurchaseInvoice invoice) {
-        PurchaseInvoice existing = repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Purchase invoice not found: " + id));
+        PurchaseInvoice existing = repo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Purchase invoice not found: " + id));
         // copy fields (for brevity copy all important fields; you can expand)
         existing.setInvoiceNumber(invoice.getInvoiceNumber());
         existing.setInvoiceDate(invoice.getInvoiceDate());
@@ -48,6 +49,7 @@ public class PurchaseInvoiceServiceImpl implements PurchaseInvoiceService {
         existing.setVehicleNumber(invoice.getVehicleNumber());
         existing.setDriverContactNumber(invoice.getDriverContactNumber());
         existing.setDriverName(invoice.getDriverName());
+        existing.setAmountInWords(invoice.getAmountInWords());
         return repo.save(existing);
     }
 

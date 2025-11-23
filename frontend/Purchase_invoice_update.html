@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Update Purchase Bill – Invoicely</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/app.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <style>
+        .sync-indicator { display: inline-flex; align-items: center; gap: .35rem; padding: .25rem .6rem; border-radius: 999px; font-size: .8rem; }
+        .status-dot { width: .5rem; height: .5rem; border-radius: 999px; display: inline-block; }
+        .status-online { background: #28a745; }
+        .status-offline { background: #dc3545; }
+        .badge-pill { border-radius: 999px; }
+        .table-small td, .table-small th { padding: .5rem .6rem; }
+        .pointer { cursor: pointer; }
+    </style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+    <!-- ===== SIDEBAR ========= -->
+    <nav id="sidebar" class="sidebar js-sidebar">
+        <div class="sidebar-content js-simplebar">
+            <a class="sidebar-brand" href="index.html">
+                <span class="align-middle">INVOICELY</span>
+            </a>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item "><a class="sidebar-link" href="index.html"><i class="align-middle" data-feather="sliders"></i>Dashboard</a></li>
+                <li class="sidebar-item"><a class="sidebar-link" href="Sales_invoices_List.html"><i class="align-middle" data-feather="file-text"></i>Sales Invoice List</a></li>
+                <li class="sidebar-item"><a class="sidebar-link" href="Purchase_invoices_List.html"><i class="align-middle" data-feather="file-text"></i>Purchase Invoice List</a></li>
+                <li class="sidebar-item"><a class="sidebar-link" href="Purchase-Invoice.html"><i class="align-middle" data-feather="plus-circle"></i>Create Purchase Invoice</a></li>
+                <li class="sidebar-item"><a class="sidebar-link" href="Sales-Invoice.html"><i class="align-middle" data-feather="plus-circle"></i>Create Sales Invoice</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- ========== MAIN ========== -->
+    <div class="main">
+
+        <main class="content">
+            <div class="container-fluid p-0">
+                <h1 class="h3 mb-3"><strong>Update Purchases Invoice</strong></h1>
+
+                <div id="printArea">
+                    <!-- Supplier and Company Details -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Supplier Details</h5>
+                            <input type="text" id="supplierName" class="form-control mb-2" placeholder="Supplier Name">
+                            <input type="text" id="supplierMobile" class="form-control mb-2" placeholder="Mobile">
+                            <input type="text" id="supplierAddress" class="form-control mb-2" placeholder="Address">
+                        </div>
+
+                        <div class="col-md-6">
+                            <h5>Company Details</h5>
+                            <input type="text" id="companyName" class="form-control mb-2" placeholder="Company Name">
+                            <input type="text" id="companyMobile" class="form-control mb-2" placeholder="Mobile">
+                            <input type="text" id="companyAddress" class="form-control mb-2" placeholder="Address">
+                        </div>
+                    </div>
+
+                    <!-- Product Table -->
+                    <h5>Product Details</h5>
+                    <table class="table table-bordered" id="productTable">
+                        <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Weight (kg)</th>
+                            <th>Price/kg</th>
+                            <th>GST %</th>
+                            <th>Shortage (Kg)</th>
+                            <th>Chotari (%)</th>
+                            <th>Weight Charges</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+
+                        <tbody id="productBody">
+                        <tr>
+                            <td><input class="form-control ItemName"></td>
+                            <td><input class="form-control qty" type="number"></td>
+                            <td><input class="form-control cost" type="number"></td>
+                            <td><input class="form-control gst" type="number"></td>
+                            <td><input class="form-control shortageKg" type="number"></td>
+                            <td><input class="form-control chotari" type="number"></td>
+                            <td><input class="form-control wCharges" type="number"></td>
+                            <td><button class="btn btn-danger btn-sm removeRow">X</button></td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <button id="addRow" class="btn btn-secondary mb-3">+ Add Product</button>
+
+                    <hr>
+
+                    <!-- Totals -->
+                    <div class="row g-3">
+                        <div class="col-md-3"><label>SGST</label><input id="sgst" class="form-control" readonly></div>
+                        <div class="col-md-3"><label>CGST</label><input id="cgst" class="form-control" readonly></div>
+                        <div class="col-md-3"><label>Total GST</label><input id="totalGst" class="form-control" readonly></div>
+                        <div class="col-md-3"><label>Net Total</label><input id="netTotal" class="form-control" readonly></div>
+                    </div>
+
+                    <hr>
+
+                    <div class="row mt-3">
+                        <div class="col-md-4"><input id="vehicleNo" class="form-control mb-2" placeholder="Vehicle Number"></div>
+                        <div class="col-md-4"><input id="driverMobile" class="form-control mb-2" placeholder="Driver Mobile"></div>
+                        <div class="col-md-4"><input id="driverName" class="form-control mb-2" placeholder="Driver Name"></div>
+                    </div>
+                </div>
+
+                <div class="text-end mt-4">
+                    <button id="saveInvoice" class="btn btn-success">Update Purchase Bill</button>
+                </div>
+
+            </div>
+        </main>
+
+    </div>
+</div>
+
+<script>
+// ============ ADD ROW =============
+document.getElementById("addRow").addEventListener("click", () => {
+    let tr = document.querySelector("#productBody tr").cloneNode(true);
+    tr.querySelectorAll("input").forEach(i => i.value = "");
+    document.getElementById("productBody").appendChild(tr);
+    bindRowEvents(tr);
+});
+
+function bindRowEvents(row) {
+    row.querySelectorAll("input").forEach(input => {
+        input.addEventListener("input", calculateTotals);
+    });
+    row.querySelector(".removeRow").addEventListener("click", () => {
+        row.remove();
+        calculateTotals();
+    });
+}
+
+document.querySelectorAll("#productBody tr").forEach(row => bindRowEvents(row));
+
+// ============= TOTAL CALCULATION ==============
+function calculateTotals() {
+    let totalSGST = 0, totalCGST = 0, totalGST = 0, netTotal = 0;
+
+    document.querySelectorAll("#productBody tr").forEach(row => {
+        let qty = parseFloat(row.querySelector(".qty").value) || 0;
+        let cost = parseFloat(row.querySelector(".cost").value) || 0;
+        let gst = parseFloat(row.querySelector(".gst").value) || 0;
+
+        let amount = qty * cost;
+        let gstAmt = amount * gst / 100;
+
+        totalGST += gstAmt;
+        totalSGST += gstAmt / 2;
+        totalCGST += gstAmt / 2;
+        netTotal += amount + gstAmt;
+    });
+
+    document.getElementById("sgst").value = totalSGST.toFixed(2);
+    document.getElementById("cgst").value = totalCGST.toFixed(2);
+    document.getElementById("totalGst").value = totalGST.toFixed(2);
+    document.getElementById("netTotal").value = netTotal.toFixed(2);
+}
+
+
+// ============ LOAD INVOICE FROM BACKEND ===============
+document.addEventListener("DOMContentLoaded", () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const invoiceId = urlParams.get("id");
+
+    if (invoiceId) loadInvoice(invoiceId);
+
+    document.getElementById("saveInvoice").addEventListener("click", () => {
+        updateInvoice(invoiceId);
+    });
+});
+
+
+function loadInvoice(id) {
+    axios.get(`http://localhost:8080/api/purchases/${id}`)
+        .then(res => populateForm(res.data))
+        .catch(() => alert("Error loading invoice"));
+}
+
+// ============= POPULATE FORM ===============
+function populateForm(data) {
+    document.getElementById("supplierName").value = data.supplierName || "";
+    document.getElementById("supplierMobile").value = data.supplierMobile || "";
+    document.getElementById("supplierAddress").value = data.supplierAddress || "";
+
+    document.getElementById("companyName").value = data.companyName || "";
+    document.getElementById("companyMobile").value = data.companyMobile || "";
+    document.getElementById("companyAddress").value = data.companyAddress || "";
+
+    document.getElementById("vehicleNo").value = data.vehicleNo || "";
+    document.getElementById("driverMobile").value = data.driverMobile || "";
+    document.getElementById("driverName").value = data.driverName || "";
+
+    const body = document.getElementById("productBody");
+    const template = body.querySelector("tr");
+    body.innerHTML = "";
+
+    data.products.forEach(p => {
+        let row = template.cloneNode(true);
+        row.querySelector(".ItemName").value = p.itemName;
+        row.querySelector(".qty").value = p.qty;
+        row.querySelector(".cost").value = p.cost;
+        row.querySelector(".gst").value = p.gst;
+        row.querySelector(".shortageKg").value = p.shortageKg;
+        row.querySelector(".chotari").value = p.chotari;
+        row.querySelector(".wCharges").value = p.wCharges;
+
+        body.appendChild(row);
+        bindRowEvents(row);
+    });
+
+    calculateTotals();
+}
+
+// ============== UPDATE API CALL ==================
+function updateInvoice(id) {
+    const invoice = {
+        supplierName: supplierName.value,
+        supplierMobile: supplierMobile.value,
+        supplierAddress: supplierAddress.value,
+        companyName: companyName.value,
+        companyMobile: companyMobile.value,
+        companyAddress: companyAddress.value,
+        vehicleNo: vehicleNo.value,
+        driverMobile: driverMobile.value,
+        driverName: driverName.value,
+        sgst: sgst.value,
+        cgst: cgst.value,
+        totalGst: totalGst.value,
+        netTotal: netTotal.value,
+        products: []
+    };
+
+    document.querySelectorAll("#productBody tr").forEach(row => {
+        invoice.products.push({
+            itemName: row.querySelector(".ItemName").value,
+            qty: row.querySelector(".qty").value,
+            cost: row.querySelector(".cost").value,
+            gst: row.querySelector(".gst").value,
+            shortageKg: row.querySelector(".shortageKg").value,
+            chotari: row.querySelector(".chotari").value,
+            wCharges: row.querySelector(".wCharges").value
+        });
+    });
+
+    axios.put(`http://localhost:8080/api/purchases/${id}`, invoice)
+        .then(() => {
+            alert("Invoice Updated Successfully!");
+            window.location.href = "Purchase_invoices_List.html";
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Error updating invoice");
+        });
+}
+
+</script>
+</body>
+</html>
