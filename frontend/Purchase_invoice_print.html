@@ -35,7 +35,7 @@
             padding: 20px;
         }
 
-        .row {
+        .row2 {
             display: flex;
             justify-content: space-between;
             margin-bottom: 15px;
@@ -65,12 +65,11 @@
         table td {
             border: 1px solid #000;
             padding: 6px;
-            text-align: left;
         }
 
         .total-box {
             margin-top: 20px;
-            width: 40%;
+            width: 45%;
             float: right;
         }
 
@@ -89,44 +88,157 @@
 
 <body>
 
-    <button class="print-btn" onclick="window.print()">Print Invoice</button>
-    <div class="invoice-box" id="invoiceContainer"> Loading invoice... </div>
-    <script> // Get purchase ID from URL 
-        const urlParams = new URLSearchParams(window.location.search);
-        const purchaseId = urlParams.get("id");
-        if (!purchaseId) { document.getElementById("invoiceContainer").innerHTML = "<h3>Invalid invoice ID.</h3>"; }
-        // Fetch purchase invoice from API 
-        fetch(`http://localhost:8080/api/purchases/${purchaseId}`).then(res =>
-            res.json()).then(invoice => renderPurchaseInvoice(invoice)).catch(err => {
-                console.error(err);
-                document.getElementById("invoiceContainer").innerHTML = "<h3>Error loading invoice</h3>";
-            });
-        // Render purchase invoice 
-        function renderPurchaseInvoice(invoice) {
-            const items = invoice.items || []; let itemsRows = "";
-            items.forEach((item, index) => {
-                const amount =
-                    (item.weightKg * item.pricePerKg) + item.weightCharges; itemsRows += ` <tr> <td>${index + 1}</td> 
-         <td>${item.itemName}</td> <td>${item.weightKg}</td> <td>${item.pricePerKg}</td>
-          <td>${item.gstPercent}</td> <td>${item.shortageKg}</td> <td>${item.chotariPercent}</td> 
-          <td>${item.weightCharges}</td> <td>${amount}</td> </tr> `;
-            });
-            document.getElementById("invoiceContainer").innerHTML = ` <h2><strong>PURCHASE INVOICE</strong></h2> 
-          <h3>Invoice No: ${invoice.invoiceNumber} | Date: ${invoice.invoiceDate}</h3> <div class="row"> 
-          <div class="box"> <strong>SUPPLIER DETAILS</strong><br> ${invoice.supplierFirmOwnerName}<br> ${invoice.supplierAddress}<br> Contact: ${invoice.supplierMobile}<br> GSTIN: ${invoice.supplierGstin || '-'} </div> <div class="box"> <strong>COMPANY DETAILS</strong><br> [Your Company Name]<br> [Company Address]<br> Contact: [Company Mobile]<br> GSTIN: [Company GSTIN] </div> </div> <table> <thead> <tr> <th>Sr No</th> <th>Item Name</th> <th>Weight (Kg)</th> <th>Price/Kg</th> <th>GST %</th> <th>Shortage</th> 
-          <th>Chotari %</th> <th>Weight Charges</th> <th>Amount</th> </tr> </thead> <tbody>${itemsRows}</tbody> 
-          </table> <div class="total-box"> <table> <tr><td>SGST:</td><td>₹ ${invoice.sgst}</td></tr> 
-          <tr><td>CGST:</td><td>₹ ${invoice.cgst}</td></tr>
-           <tr><td>Weight Shortage Amount:</td><td>₹ ${invoice.weightShortageAmount}</td></tr>
-            <tr><td>Chotari Amount:</td><td>₹ ${invoice.chotariAmount}</td></tr> 
-            <tr><td>Weight Charges Deducted:</td><td>₹ ${invoice.weightChargesDeducted}</td></tr> 
-            <tr><td>Net Total:</td><td>₹ ${invoice.finalNetTotal}</td></tr> </table> </div>
-             <div style="clear: both;"></div> <p><strong>Amount in Words:</strong> ${invoice.amountInWords}</p>
-              <div class="signature"> <p><strong>Authorized Signature</strong></p> <p>_________________________</p> 
-              </div> `;
-        } </script>
+<button class="print-btn" onclick="window.print()">Print Invoice</button>
 
+<div class="invoice-box" id="invoiceContainer">Loading invoice...</div>
+
+<script>
+
+// Extract ID
+const urlParams = new URLSearchParams(window.location.search);
+const purchaseId = urlParams.get("id");
+
+if (!purchaseId) {
+    document.getElementById("invoiceContainer").innerHTML = "<h3>Invalid Invoice ID.</h3>";
+}
+
+// Load Company Details
+let companyData = null;
+
+function loadCompanyDetails() {
+    return fetch("http://localhost:8080/api/companies")
+        .then(res => res.json())
+        .then(data => {
+            companyData = data.length > 0 ? data[0] : null;
+        });
+}
+
+// Convert Number → Words
+function numberToWords(num) {
+    const words = ["Zero","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven",
+                   "Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
+    const tens = ["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
+
+    function convert(n) {
+        if (n < 20) return words[n];
+        if (n < 100) return tens[Math.floor(n/10)] + (n%10 === 0 ? "" : " " + words[n%10]);
+        if (n < 1000) return words[Math.floor(n/100)] + " Hundred " + (n%100 === 0 ? "" : convert(n%100));
+        if (n < 100000) return convert(Math.floor(n/1000)) + " Thousand " + (n%1000 === 0 ? "" : convert(n%1000));
+        return n;
+    }
+
+    return convert(num) + " Only";
+}
+
+// Fetch Invoice + Company
+Promise.all([
+    loadCompanyDetails(),
+    fetch(`http://localhost:8080/api/purchases/${purchaseId}`).then(res => res.json())
+])
+.then(([_, invoice]) => {
+    renderPurchase(invoice);
+})
+.catch(err => {
+    console.error(err);
+    document.getElementById("invoiceContainer").innerHTML = "<h3>Error loading invoice</h3>";
+});
+
+// Render Invoice
+function renderPurchase(invoice) {
+
+    const items = invoice.items || [];
+    let itemsRows = "";
+
+    items.forEach((item, index) => {
+        const amount = (item.weightKg - item.shortageKg) * item.pricePerKg;
+        itemsRows += `
+            <tr>
+                <td>${index + 1}</td>
+                <td>${item.itemName}</td>
+                <td>${item.weightKg}</td>
+                <td>${item.pricePerKg}</td>
+                <td>${item.gstPercent}</td>
+                <td>${item.shortageKg}</td>
+                <td>${item.chotariPercent}</td>
+                <td>${item.weightCharges}</td>
+                <td>${amount.toFixed(2)}</td>
+            </tr>
+        `;
+    });
+
+    let companyHtml = `
+        <strong>COMPANY DETAILS</strong><br>
+        ${companyData.companyName}<br>
+        ${companyData.address}<br>
+        Mobile: ${companyData.mobile}<br>
+        GSTIN: ${companyData.gstin}<br>
+        Account No: ${companyData.accountnumber}<br>
+        Account Holder: ${companyData.accountholdername}
+    `;
+
+    const words = numberToWords(Math.round(invoice.finalNetTotal));
+
+    document.getElementById("invoiceContainer").innerHTML = `
+
+        <h2><strong>PURCHASE INVOICE</strong></h2>
+        <h3>Invoice No: ${invoice.invoiceNumber} | Date: ${invoice.invoiceDate}</h3>
+
+        <div class="row2">
+
+            <div class="box">
+                <strong>SUPPLIER DETAILS</strong><br>
+                ${invoice.supplierFirmOwnerName}<br>
+                ${invoice.supplierAddress}<br>
+                Mobile: ${invoice.supplierMobile}<br>
+            </div>
+
+            <div class="box">
+                ${companyHtml}
+            </div>
+
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Sr No</th>
+                    <th>Item</th>
+                    <th>Weight</th>
+                    <th>Price/Kg</th>
+                    <th>GST%</th>
+                    <th>Shortage</th>
+                    <th>Chotari%</th>
+                    <th>Weight Charges</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>${itemsRows}</tbody>
+        </table>
+
+        <div class="total-box">
+            <table>
+                <tr><td>SGST:</td><td>₹ ${invoice.sgst}</td></tr>
+                <tr><td>CGST:</td><td>₹ ${invoice.cgst}</td></tr>
+                <tr><td>Shortage Amount:</td><td>₹ ${invoice.weightShortageAmount}</td></tr>
+                <tr><td>Chotari Amount:</td><td>₹ ${invoice.chotariAmount}</td></tr>
+                <tr><td>Weight Charges Deducted:</td><td>₹ ${invoice.weightChargesDeducted}</td></tr>
+                <tr><td>Net Total:</td><td>₹ ${invoice.finalNetTotal}</td></tr>
+            </table>
+        </div>
+
+        <div style="clear: both;"></div><br>
+
+        <p><strong>Amount in Words:</strong> ${words}</p>
+
+        <div class="signature">
+            <p><strong>Authorized Signature</strong></p>
+            <p>______________________</p>
+        </div>
+
+    `;
+}
+
+</script>
 
 </body>
-
 </html>

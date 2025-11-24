@@ -18,33 +18,34 @@ import java.util.List;
 @Entity
 @Table(name = "purchase_invoice")
 public class PurchaseInvoice {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // optional invoice number
+    // Invoice
     private String invoiceNumber;
     private LocalDate invoiceDate;
 
-    // Supplier details (kept simple)
+    // Supplier
     private String supplierFirmOwnerName;
     private String supplierMobile;
+
     @Column(length = 1000)
     private String supplierAddress;
 
-    // reference to user's own company profile (optional)
+    // Company
     private Long companyId;
 
-    // product list stored as JSON text
+    // Items
     @Lob
     @Column(name = "items_json", columnDefinition = "TEXT")
-
     private String itemsJson;
 
     @Transient
     private List<PurchaseItem> items = new ArrayList<>();
 
-    // GST details
+    // GST
     private Double sgst;
     private Double cgst;
 
@@ -54,11 +55,14 @@ public class PurchaseInvoice {
     private Double weightChargesDeducted;
     private Double finalNetTotal;
 
-    // vehicle
+    // Vehicle
     private String vehicleNumber;
     private String driverContactNumber;
     private String driverName;
+
+    // Amount in Words
     private String amountInWords;
+
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @PrePersist
@@ -77,8 +81,7 @@ public class PurchaseInvoice {
     public void readItemsJson() {
         try {
             if (itemsJson != null && !itemsJson.isBlank()) {
-                this.items = MAPPER.readValue(itemsJson, new TypeReference<List<PurchaseItem>>() {
-                });
+                this.items = MAPPER.readValue(itemsJson, new TypeReference<List<PurchaseItem>>() {});
             }
         } catch (IOException e) {
             this.items = new ArrayList<>();

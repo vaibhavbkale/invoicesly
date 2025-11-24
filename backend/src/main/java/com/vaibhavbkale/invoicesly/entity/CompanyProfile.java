@@ -16,7 +16,11 @@ public class CompanyProfile {
     private String companyName;
     private String ownerName;
     private String mobile;
+
     @Column(length = 1000)
     private String address;
+
     private String gstin;
+    private String accountnumber;
+    private String accountholdername;
 }

@@ -1,271 +1,487 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>Update Purchase Bill – Invoicely</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/app.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-    <style>
-        .sync-indicator { display: inline-flex; align-items: center; gap: .35rem; padding: .25rem .6rem; border-radius: 999px; font-size: .8rem; }
-        .status-dot { width: .5rem; height: .5rem; border-radius: 999px; display: inline-block; }
-        .status-online { background: #28a745; }
-        .status-offline { background: #dc3545; }
-        .badge-pill { border-radius: 999px; }
-        .table-small td, .table-small th { padding: .5rem .6rem; }
-        .pointer { cursor: pointer; }
-    </style>
+<head>
+  <meta charset="utf-8">
+  <title>New Purchase Bill – Invoicely</title>
+
+  <!-- Bootstrap & App CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/app.css" rel="stylesheet">
+
+  <!-- Axios & Feather -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+
+  <style>
+    .table-small td,
+    .table-small th {
+      padding: .5rem .6rem;
+    }
+
+    .pointer {
+      cursor: pointer;
+    }
+  </style>
 </head>
 
 <body>
 
 <div class="wrapper">
 
-    <!-- ===== SIDEBAR ========= -->
-    <nav id="sidebar" class="sidebar js-sidebar">
-        <div class="sidebar-content js-simplebar">
-            <a class="sidebar-brand" href="index.html">
-                <span class="align-middle">INVOICELY</span>
-            </a>
-            <ul class="sidebar-nav">
-                <li class="sidebar-item "><a class="sidebar-link" href="index.html"><i class="align-middle" data-feather="sliders"></i>Dashboard</a></li>
-                <li class="sidebar-item"><a class="sidebar-link" href="Sales_invoices_List.html"><i class="align-middle" data-feather="file-text"></i>Sales Invoice List</a></li>
-                <li class="sidebar-item"><a class="sidebar-link" href="Purchase_invoices_List.html"><i class="align-middle" data-feather="file-text"></i>Purchase Invoice List</a></li>
-                <li class="sidebar-item"><a class="sidebar-link" href="Purchase-Invoice.html"><i class="align-middle" data-feather="plus-circle"></i>Create Purchase Invoice</a></li>
-                <li class="sidebar-item"><a class="sidebar-link" href="Sales-Invoice.html"><i class="align-middle" data-feather="plus-circle"></i>Create Sales Invoice</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- ========== MAIN ========== -->
-    <div class="main">
-
-        <main class="content">
-            <div class="container-fluid p-0">
-                <h1 class="h3 mb-3"><strong>Update Purchases Invoice</strong></h1>
-
-                <div id="printArea">
-                    <!-- Supplier and Company Details -->
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <h5>Supplier Details</h5>
-                            <input type="text" id="supplierName" class="form-control mb-2" placeholder="Supplier Name">
-                            <input type="text" id="supplierMobile" class="form-control mb-2" placeholder="Mobile">
-                            <input type="text" id="supplierAddress" class="form-control mb-2" placeholder="Address">
-                        </div>
-
-                        <div class="col-md-6">
-                            <h5>Company Details</h5>
-                            <input type="text" id="companyName" class="form-control mb-2" placeholder="Company Name">
-                            <input type="text" id="companyMobile" class="form-control mb-2" placeholder="Mobile">
-                            <input type="text" id="companyAddress" class="form-control mb-2" placeholder="Address">
-                        </div>
-                    </div>
-
-                    <!-- Product Table -->
-                    <h5>Product Details</h5>
-                    <table class="table table-bordered" id="productTable">
-                        <thead>
-                        <tr>
-                            <th>Item Name</th>
-                            <th>Weight (kg)</th>
-                            <th>Price/kg</th>
-                            <th>GST %</th>
-                            <th>Shortage (Kg)</th>
-                            <th>Chotari (%)</th>
-                            <th>Weight Charges</th>
-                            <th>Action</th>
-                        </tr>
-                        </thead>
-
-                        <tbody id="productBody">
-                        <tr>
-                            <td><input class="form-control ItemName"></td>
-                            <td><input class="form-control qty" type="number"></td>
-                            <td><input class="form-control cost" type="number"></td>
-                            <td><input class="form-control gst" type="number"></td>
-                            <td><input class="form-control shortageKg" type="number"></td>
-                            <td><input class="form-control chotari" type="number"></td>
-                            <td><input class="form-control wCharges" type="number"></td>
-                            <td><button class="btn btn-danger btn-sm removeRow">X</button></td>
-                        </tr>
-                        </tbody>
-                    </table>
-
-                    <button id="addRow" class="btn btn-secondary mb-3">+ Add Product</button>
-
-                    <hr>
-
-                    <!-- Totals -->
-                    <div class="row g-3">
-                        <div class="col-md-3"><label>SGST</label><input id="sgst" class="form-control" readonly></div>
-                        <div class="col-md-3"><label>CGST</label><input id="cgst" class="form-control" readonly></div>
-                        <div class="col-md-3"><label>Total GST</label><input id="totalGst" class="form-control" readonly></div>
-                        <div class="col-md-3"><label>Net Total</label><input id="netTotal" class="form-control" readonly></div>
-                    </div>
-
-                    <hr>
-
-                    <div class="row mt-3">
-                        <div class="col-md-4"><input id="vehicleNo" class="form-control mb-2" placeholder="Vehicle Number"></div>
-                        <div class="col-md-4"><input id="driverMobile" class="form-control mb-2" placeholder="Driver Mobile"></div>
-                        <div class="col-md-4"><input id="driverName" class="form-control mb-2" placeholder="Driver Name"></div>
-                    </div>
-                </div>
-
-                <div class="text-end mt-4">
-                    <button id="saveInvoice" class="btn btn-success">Update Purchase Bill</button>
-                </div>
-
-            </div>
-        </main>
-
+  <!-- SIDEBAR -->
+  <nav id="sidebar" class="sidebar js-sidebar">
+    <div class="sidebar-content js-simplebar">
+      <a class="sidebar-brand" href="index.html">
+        <span class="align-middle">INVOICELY</span>
+      </a>
+      <ul class="sidebar-nav">
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="index.html">
+            <span class="align-middle">Dashboard</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="Sales_invoices_List.html">
+            <span class="align-middle">Sales Invoice List</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="Purchase_invoices_List.html">
+            <span class="align-middle">Purchase Invoice List</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="Purchase-Invoice.html">
+            <span class="align-middle">Create Purchase Invoice</span>
+          </a>
+        </li>
+        <li class="sidebar-item active">
+          <a class="sidebar-link" href="Sales-Invoice.html">
+            <span class="align-middle">Create Sales Invoice</span>
+          </a>
+        </li>
+        <li class="sidebar-item">
+          <a class="sidebar-link" href="settings.html">
+            <span class="align-middle">Settings</span>
+          </a>
+        </li>
+      </ul>
     </div>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main">
+    <main class="content">
+      <div class="container-fluid p-0">
+
+        <div class="d-flex justify-content-between mb-3">
+          <h1 class="h3 mb-0"><strong>Create / Update Purchase Invoice</strong></h1>
+        </div>
+
+        <!-- Supplier & Self Details -->
+        <div class="row mb-4">
+          <!-- Supplier -->
+          <div class="col-md-6">
+            <h5 class="section-title">Supplier Details</h5>
+            <input type="text" class="form-control mb-2" id="supplierName" placeholder="Firm Owner Name">
+            <input type="text" class="form-control mb-2" id="supplierMobile" placeholder="Mobile No.">
+            <input type="text" class="form-control mb-2" id="supplierAddress" placeholder="Address">
+          </div>
+
+          <!-- Self / Company -->
+          <div class="col-md-6">
+            <h5 class="section-title">Self Details</h5>
+            <input type="text" class="form-control mb-2" id="companyName" placeholder="Company Name" readonly>
+            <input type="text" class="form-control mb-2" id="companyMobile" placeholder="Mobile No." readonly>
+            <input type="text" class="form-control mb-2" id="companyAddress" placeholder="Address" readonly>
+            <!-- Extra company details from CompanyProfile -->
+            <input type="text" class="form-control mb-2" id="companyGstin" placeholder="GSTIN" readonly>
+            <input type="text" class="form-control mb-2" id="companyAccountNumber" placeholder="Account Number" readonly>
+            <input type="text" class="form-control mb-2" id="companyAccountHolder" placeholder="Account Holder Name" readonly>
+          </div>
+        </div>
+
+        <hr>
+
+        <!-- PRODUCT TABLE -->
+        <h5 class="section-title">Product Details</h5>
+
+        <table class="table table-bordered" id="productTable">
+          <thead>
+          <tr>
+            <th>Item Name</th>
+            <th>Weight (kg)</th>
+            <th>Price/kg</th>
+            <th>GST %</th>
+            <th>Shortage (Kg)</th>
+            <th>Chotari (%)</th>
+            <th>Weight Charges (₹)</th>
+            <th>Action</th>
+          </tr>
+          </thead>
+          <tbody id="productBody">
+          <tr class="itemRow">
+            <td><input type="text" class="form-control itemName"></td>
+            <td><input type="number" class="form-control weightKg"></td>
+            <td><input type="number" class="form-control pricePerKg"></td>
+            <td><input type="number" class="form-control gstPercent"></td>
+            <td><input type="number" class="form-control shortageKg"></td>
+            <td><input type="number" class="form-control chotariPercent"></td>
+            <td><input type="number" class="form-control weightCharges"></td>
+            <td><button type="button" class="btn btn-danger btn-sm removeRow">X</button></td>
+          </tr>
+          </tbody>
+        </table>
+
+        <!-- HIDDEN TEMPLATE ROW -->
+        <table style="display:none;">
+          <tr id="itemRowTemplate" class="itemRow">
+            <td><input type="text" class="form-control itemName"></td>
+            <td><input type="number" class="form-control weightKg"></td>
+            <td><input type="number" class="form-control pricePerKg"></td>
+            <td><input type="number" class="form-control gstPercent"></td>
+            <td><input type="number" class="form-control shortageKg"></td>
+            <td><input type="number" class="form-control chotariPercent"></td>
+            <td><input type="number" class="form-control weightCharges"></td>
+            <td><button type="button" class="btn btn-danger btn-sm removeRow">X</button></td>
+          </tr>
+        </table>
+
+        <button id="addProductBtn" class="btn btn-primary btn-sm">+ Add Item</button>
+
+        <hr>
+
+        <!-- TOTALS -->
+        <div class="row g-3 mt-2">
+          <div class="col-md-3">
+            <label>SGST Amount</label>
+            <input type="number" id="sgst" class="form-control" readonly>
+          </div>
+          <div class="col-md-3">
+            <label>CGST Amount</label>
+            <input type="number" id="cgst" class="form-control" readonly>
+          </div>
+          <div class="col-md-3">
+            <label>Total GST</label>
+            <input type="number" id="totalGst" class="form-control" readonly>
+          </div>
+        </div>
+
+        <div class="row g-3 mt-3">
+          <div class="col-md-3">
+            <label>Shortage Amount</label>
+            <input type="number" id="shortageAmt" class="form-control" readonly>
+          </div>
+          <div class="col-md-3">
+            <label>Chotari Amount</label>
+            <input type="number" id="chotariAmt" class="form-control" readonly>
+          </div>
+          <div class="col-md-3">
+            <label>Weight Charges Deducted</label>
+            <input type="number" id="weightChargeAmt" class="form-control" readonly>
+          </div>
+          <div class="col-md-3">
+            <label>Net Total</label>
+            <input type="number" id="netTotal" class="form-control" readonly>
+          </div>
+        </div>
+
+        <hr>
+
+        <!-- VEHICLE DETAILS -->
+        <div class="col-md-6 mt-3">
+          <input type="text" id="vehicleNo" class="form-control mb-2" placeholder="Vehicle Number">
+          <input type="text" id="driverMobile" class="form-control mb-2" placeholder="Driver Contact Number">
+          <input type="text" id="driverName" class="form-control mb-2" placeholder="Driver Name">
+        </div>
+
+        <div class="text-end mt-4">
+          <button type="button" class="btn btn-success" id="saveInvoice">Save Purchase Bill</button>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
 </div>
 
+<!-- JS START -->
 <script>
-// ============ ADD ROW =============
-document.getElementById("addRow").addEventListener("click", () => {
-    let tr = document.querySelector("#productBody tr").cloneNode(true);
-    tr.querySelectorAll("input").forEach(i => i.value = "");
-    document.getElementById("productBody").appendChild(tr);
-    bindRowEvents(tr);
-});
+  feather.replace();
 
-function bindRowEvents(row) {
-    row.querySelectorAll("input").forEach(input => {
-        input.addEventListener("input", calculateTotals);
+  // -------------------------------------------
+  // URL PARAM - CHECK IF UPDATE MODE
+  // -------------------------------------------
+  const urlParams = new URLSearchParams(window.location.search);
+  const invoiceId = urlParams.get("id");
+  const isUpdate = invoiceId !== null && invoiceId !== "" && invoiceId !== "null";
+
+  // -------------------------------------------
+  // LOAD COMPANY PROFILE (FROM /api/companies)
+  // -------------------------------------------
+  function loadCompanyDetails() {
+    axios.get("http://localhost:8080/api/companies")
+      .then(res => {
+        if (res.data.length > 0) {
+          const c = res.data[0];
+          // Match CompanyProfile entity fields
+          document.getElementById("companyName").value = c.companyName || "";
+          document.getElementById("companyMobile").value = c.mobile || "";
+          document.getElementById("companyAddress").value = c.address || "";
+          document.getElementById("companyGstin").value = c.gstin || "";
+          document.getElementById("companyAccountNumber").value = c.accountnumber || "";
+          document.getElementById("companyAccountHolder").value = c.accountholdername || "";
+        }
+      })
+      .catch(err => console.error("Company load error:", err));
+  }
+
+  // -------------------------------------------
+  // BIND EVENTS TO A ROW  (IMPORTANT FIX)
+  // -------------------------------------------
+  function bindRowEvents(row) {
+    // Recalculate on any input change
+    row.querySelectorAll("input").forEach(inp => {
+      inp.addEventListener("input", calculateTotals);
     });
-    row.querySelector(".removeRow").addEventListener("click", () => {
+
+    // Remove row
+    const btn = row.querySelector(".removeRow");
+    if (btn) {
+      btn.addEventListener("click", () => {
         row.remove();
         calculateTotals();
+      });
+    }
+  }
+
+  // -------------------------------------------
+  // LOAD INVOICE FOR UPDATE
+  // -------------------------------------------
+  function loadInvoice(id) {
+    axios.get(`http://localhost:8080/api/purchases/${id}`)
+      .then(res => {
+        const d = res.data;
+
+        document.getElementById("supplierName").value = d.supplierFirmOwnerName || "";
+        document.getElementById("supplierMobile").value = d.supplierMobile || "";
+        document.getElementById("supplierAddress").value = d.supplierAddress || "";
+
+        // Clear existing product rows
+        const body = document.querySelector("#productBody");
+        body.innerHTML = "";
+
+        // Load items rows
+        if (d.items && Array.isArray(d.items)) {
+          d.items.forEach(item => addRow(item));
+        } else {
+          // fallback if itemsJson only
+          try {
+            const parsed = JSON.parse(d.itemsJson || "[]");
+            parsed.forEach(item => addRow(item));
+          } catch (e) {
+            console.error("Error parsing itemsJson", e);
+          }
+        }
+
+        document.getElementById("sgst").value = d.sgst ?? 0;
+        document.getElementById("cgst").value = d.cgst ?? 0;
+        document.getElementById("shortageAmt").value = d.weightShortageAmount ?? 0;
+        document.getElementById("chotariAmt").value = d.chotariAmount ?? 0;
+        document.getElementById("weightChargeAmt").value = d.weightChargesDeducted ?? 0;
+        document.getElementById("netTotal").value = d.finalNetTotal ?? 0;
+
+        document.getElementById("vehicleNo").value = d.vehicleNumber || "";
+        document.getElementById("driverMobile").value = d.driverContactNumber || "";
+        document.getElementById("driverName").value = d.driverName || "";
+
+        // After loading everything, ensure totals are re-evaluated
+        calculateTotals();
+      })
+      .catch(err => console.error("Load invoice error:", err));
+  }
+
+  // -------------------------------------------
+  // ADD ROW
+  // -------------------------------------------
+  document.getElementById("addProductBtn").addEventListener("click", () => addRow());
+
+  function addRow(item = {}) {
+    const template = document.getElementById("itemRowTemplate");
+    const clone = template.cloneNode(true);
+    clone.removeAttribute("id");
+    clone.style.display = "";
+
+    clone.querySelector(".itemName").value = item.itemName || "";
+    clone.querySelector(".weightKg").value = item.weightKg || "";
+    clone.querySelector(".pricePerKg").value = item.pricePerKg || "";
+    clone.querySelector(".gstPercent").value = item.gstPercent || "";
+    clone.querySelector(".shortageKg").value = item.shortageKg || "";
+    clone.querySelector(".chotariPercent").value = item.chotariPercent || "";
+    clone.querySelector(".weightCharges").value = item.weightCharges || "";
+
+    bindRowEvents(clone);
+    document.querySelector("#productBody").appendChild(clone);
+
+    calculateTotals();
+  }
+
+  // -------------------------------------------
+  // SAVE or UPDATE BUTTON CLICK
+  // -------------------------------------------
+  document.getElementById("saveInvoice").addEventListener("click", () => {
+    if (isUpdate) updateInvoice(invoiceId);
+    else saveInvoice();
+  });
+
+  // -------------------------------------------
+  // COLLECT FORM DATA
+  // -------------------------------------------
+  function collectData() {
+    let items = [];
+    document.querySelectorAll("#productBody tr").forEach(r => {
+      items.push({
+        itemName: r.querySelector(".itemName").value,
+        weightKg: parseFloat(r.querySelector(".weightKg").value) || 0,
+        pricePerKg: parseFloat(r.querySelector(".pricePerKg").value) || 0,
+        gstPercent: parseFloat(r.querySelector(".gstPercent").value) || 0,
+        shortageKg: parseFloat(r.querySelector(".shortageKg").value) || 0,
+        chotariPercent: parseFloat(r.querySelector(".chotariPercent").value) || 0,
+        weightCharges: parseFloat(r.querySelector(".weightCharges").value) || 0
+      });
     });
-}
 
-document.querySelectorAll("#productBody tr").forEach(row => bindRowEvents(row));
+    return {
+      invoiceNumber: "INV-" + Date.now(),
+      invoiceDate: new Date().toISOString().split("T")[0],
 
-// ============= TOTAL CALCULATION ==============
-function calculateTotals() {
-    let totalSGST = 0, totalCGST = 0, totalGST = 0, netTotal = 0;
+      supplierFirmOwnerName: document.getElementById("supplierName").value,
+      supplierMobile: document.getElementById("supplierMobile").value,
+      supplierAddress: document.getElementById("supplierAddress").value,
+
+      // Link to company profile (static id for now)
+      companyId: 1,
+
+      items: items,
+      itemsJson: JSON.stringify(items),
+
+      sgst: parseFloat(document.getElementById("sgst").value) || 0,
+      cgst: parseFloat(document.getElementById("cgst").value) || 0,
+      weightShortageAmount: parseFloat(document.getElementById("shortageAmt").value) || 0,
+      chotariAmount: parseFloat(document.getElementById("chotariAmt").value) || 0,
+      weightChargesDeducted: parseFloat(document.getElementById("weightChargeAmt").value) || 0,
+      finalNetTotal: parseFloat(document.getElementById("netTotal").value) || 0,
+
+      vehicleNumber: document.getElementById("vehicleNo").value,
+      driverContactNumber: document.getElementById("driverMobile").value,
+      driverName: document.getElementById("driverName").value,
+      amountInWords: ""
+    };
+  }
+
+  // -------------------------------------------
+  // CREATE (POST)
+  // -------------------------------------------
+  function saveInvoice() {
+    calculateTotals(); // ensure latest values
+    axios.post("http://localhost:8080/api/purchases", collectData())
+      .then(() => {
+        alert("Purchase Invoice Created Successfully!");
+        location.reload();
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Error while saving invoice!");
+      });
+  }
+
+  // -------------------------------------------
+  // UPDATE (PUT)
+  // -------------------------------------------
+  function updateInvoice(id) {
+    calculateTotals(); // ensure latest values
+    axios.put(`http://localhost:8080/api/purchases/${id}`, collectData())
+      .then(() => {
+        alert("Purchase Invoice Updated Successfully!");
+        window.location.href = "Purchase_invoices_List.html";
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Error while updating invoice!");
+      });
+  }
+
+  // -------------------------------------------
+  // TOTAL CALCULATIONS  (GST + NET TOTAL)
+  // -------------------------------------------
+  function calculateTotals() {
+    let totalSGST = 0, totalCGST = 0, totalGST = 0;
+    let totalShortage = 0, totalChotari = 0, totalWeightCharges = 0, finalNet = 0;
 
     document.querySelectorAll("#productBody tr").forEach(row => {
-        let qty = parseFloat(row.querySelector(".qty").value) || 0;
-        let cost = parseFloat(row.querySelector(".cost").value) || 0;
-        let gst = parseFloat(row.querySelector(".gst").value) || 0;
+      let weight = parseFloat(row.querySelector(".weightKg").value) || 0;
+      let price = parseFloat(row.querySelector(".pricePerKg").value) || 0;
+      let gst = parseFloat(row.querySelector(".gstPercent").value) || 0;
+      let shortage = parseFloat(row.querySelector(".shortageKg").value) || 0;
+      let chotari = parseFloat(row.querySelector(".chotariPercent").value) || 0;
+      let weightCharges = parseFloat(row.querySelector(".weightCharges").value) || 0;
 
-        let amount = qty * cost;
-        let gstAmt = amount * gst / 100;
+      let actualWeight = Math.max(0, weight - shortage);
+      let subTotal = actualWeight * price;
 
-        totalGST += gstAmt;
-        totalSGST += gstAmt / 2;
-        totalCGST += gstAmt / 2;
-        netTotal += amount + gstAmt;
+      let gstAmt = (subTotal * gst) / 100;
+      let sgstAmt = gstAmt / 2;
+      let cgstAmt = gstAmt / 2;
+
+      let shortageAmt = shortage * price;
+      let chotariAmt = (subTotal * chotari) / 100;
+
+      let rowTotal = subTotal + gstAmt - chotariAmt + weightCharges;
+
+      totalSGST += sgstAmt;
+      totalCGST += cgstAmt;
+      totalGST += gstAmt;
+
+      totalShortage += shortageAmt;
+      totalChotari += chotariAmt;
+      totalWeightCharges += weightCharges;
+
+      finalNet += rowTotal;
     });
 
     document.getElementById("sgst").value = totalSGST.toFixed(2);
     document.getElementById("cgst").value = totalCGST.toFixed(2);
     document.getElementById("totalGst").value = totalGST.toFixed(2);
-    document.getElementById("netTotal").value = netTotal.toFixed(2);
-}
 
+    document.getElementById("shortageAmt").value = totalShortage.toFixed(2);
+    document.getElementById("chotariAmt").value = totalChotari.toFixed(2);
+    document.getElementById("weightChargeAmt").value = totalWeightCharges.toFixed(2);
 
-// ============ LOAD INVOICE FROM BACKEND ===============
-document.addEventListener("DOMContentLoaded", () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const invoiceId = urlParams.get("id");
+    document.getElementById("netTotal").value = finalNet.toFixed(2);
+  }
 
-    if (invoiceId) loadInvoice(invoiceId);
+  // -------------------------------------------
+  // INITIAL LOAD
+  // -------------------------------------------
+  document.addEventListener("DOMContentLoaded", function () {
+    // Auto-fill company from CompanyProfile
+    loadCompanyDetails();
 
-    document.getElementById("saveInvoice").addEventListener("click", () => {
-        updateInvoice(invoiceId);
-    });
-});
+    // Bind default first row events
+    document.querySelectorAll("#productBody .itemRow").forEach(row => bindRowEvents(row));
 
+    // If update mode, load invoice
+    if (isUpdate) {
+      // slight delay only for safety (axios + DOM ready)
+      setTimeout(() => loadInvoice(invoiceId), 150);
+    }
 
-function loadInvoice(id) {
-    axios.get(`http://localhost:8080/api/purchases/${id}`)
-        .then(res => populateForm(res.data))
-        .catch(() => alert("Error loading invoice"));
-}
-
-// ============= POPULATE FORM ===============
-function populateForm(data) {
-    document.getElementById("supplierName").value = data.supplierName || "";
-    document.getElementById("supplierMobile").value = data.supplierMobile || "";
-    document.getElementById("supplierAddress").value = data.supplierAddress || "";
-
-    document.getElementById("companyName").value = data.companyName || "";
-    document.getElementById("companyMobile").value = data.companyMobile || "";
-    document.getElementById("companyAddress").value = data.companyAddress || "";
-
-    document.getElementById("vehicleNo").value = data.vehicleNo || "";
-    document.getElementById("driverMobile").value = data.driverMobile || "";
-    document.getElementById("driverName").value = data.driverName || "";
-
-    const body = document.getElementById("productBody");
-    const template = body.querySelector("tr");
-    body.innerHTML = "";
-
-    data.products.forEach(p => {
-        let row = template.cloneNode(true);
-        row.querySelector(".ItemName").value = p.itemName;
-        row.querySelector(".qty").value = p.qty;
-        row.querySelector(".cost").value = p.cost;
-        row.querySelector(".gst").value = p.gst;
-        row.querySelector(".shortageKg").value = p.shortageKg;
-        row.querySelector(".chotari").value = p.chotari;
-        row.querySelector(".wCharges").value = p.wCharges;
-
-        body.appendChild(row);
-        bindRowEvents(row);
-    });
-
+    // First calculation (in case of default row)
     calculateTotals();
-}
-
-// ============== UPDATE API CALL ==================
-function updateInvoice(id) {
-    const invoice = {
-        supplierName: supplierName.value,
-        supplierMobile: supplierMobile.value,
-        supplierAddress: supplierAddress.value,
-        companyName: companyName.value,
-        companyMobile: companyMobile.value,
-        companyAddress: companyAddress.value,
-        vehicleNo: vehicleNo.value,
-        driverMobile: driverMobile.value,
-        driverName: driverName.value,
-        sgst: sgst.value,
-        cgst: cgst.value,
-        totalGst: totalGst.value,
-        netTotal: netTotal.value,
-        products: []
-    };
-
-    document.querySelectorAll("#productBody tr").forEach(row => {
-        invoice.products.push({
-            itemName: row.querySelector(".ItemName").value,
-            qty: row.querySelector(".qty").value,
-            cost: row.querySelector(".cost").value,
-            gst: row.querySelector(".gst").value,
-            shortageKg: row.querySelector(".shortageKg").value,
-            chotari: row.querySelector(".chotari").value,
-            wCharges: row.querySelector(".wCharges").value
-        });
-    });
-
-    axios.put(`http://localhost:8080/api/purchases/${id}`, invoice)
-        .then(() => {
-            alert("Invoice Updated Successfully!");
-            window.location.href = "Purchase_invoices_List.html";
-        })
-        .catch(err => {
-            console.error(err);
-            alert("Error updating invoice");
-        });
-}
+  });
 
 </script>
+
 </body>
 </html>

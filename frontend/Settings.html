@@ -5,177 +5,187 @@
     <meta charset="utf-8">
     <title>Settings – Invoicely</title>
     <link href="css/app.css" rel="stylesheet">
-    <!-- Axios CDN -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <style>
+        .disabled-input {
+            background: #e6e6e6;
+            pointer-events: none;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="wrapper">
-        <!-- Sidebar -->
-        <nav id="sidebar" class="sidebar js-sidebar">
-            <div class="sidebar-content js-simplebar">
-                <a class="sidebar-brand" href="index.html">
-                    <span class="align-middle">INVOICELY</span>
-                </a>
-                <ul class="sidebar-nav">
-                    <li class="sidebar-item">
-                        <a class="sidebar-link" href="index.html">
-                            <i class="align-middle" data-feather="sliders"></i>
-                            <span class="align-middle">Dashboard</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link" href="Sales_invoices_List.html">
-                            <i class="align-middle" data-feather="file-text"></i>
-                            <span class="align-middle">Invoice List</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link" href="Purchase-Invoice.html">
-                            <i class="align-middle" data-feather="plus-circle"></i>
-                            <span class="align-middle">Create Purchase Invoice</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link" href="Sales-Invoice.html">
-                            <i class="align-middle" data-feather="plus-circle"></i>
-                            <span class="align-middle">Create Sales Invoice</span>
-                        </a>
-                    </li>
-                    <li class="sidebar-item active">
-                        <a class="sidebar-link" href="settings.html">
-                            <i class="align-middle" data-feather="settings"></i>
-                            <span class="align-middle">Settings</span>
-                        </a>
-                    </li>
-                </ul>
-                <div class="sidebar-cta">
-                    <div class="sidebar-cta-content">
-                        <strong class="d-inline-block mb-2">Offline-first</strong>
-                        <div class="mb-2 text-sm">Works offline. Sync when you're back online.</div>
-                        <div class="small text-muted">Last Sync: <span id="lastSyncSide">—</span></div>
-                    </div>
-                </div>
-            </div>
-        </nav>
 
-        <!-- Main Content -->
-        <div class="main">
-            <main class="content">
-                <div class="container-fluid p-0">
-                    <h1 class="h3 mb-3">Settings</h1>
-                    <div class="card">
-                        <div class="card-body">
-                            <h3 class="mb-4">Profile</h3>
+<div class="wrapper">
 
-                            <!-- Profile Form -->
-                            <form id="profileForm">
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label>Company Name</label>
-                                        <input type="text" id="companyName" class="form-control"
-                                            placeholder="My Restaurant">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label>Owner Name</label>
-                                        <input type="text" id="ownerName" class="form-control" placeholder="John Doe">
-                                    </div>
-                                </div>
+    <!-- Sidebar (unchanged) -->
+    <nav id="sidebar" class="sidebar js-sidebar">
+        <div class="sidebar-content js-simplebar">
+            <a class="sidebar-brand" href="index.html">
+                <span class="align-middle">INVOICELY</span>
+            </a>
 
-                                <div class="mb-3">
-                                    <label>Address</label>
-                                    <textarea id="address" class="form-control"
-                                        placeholder="123 Street, City"></textarea>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label>Mobile Number</label>
-                                        <input type="text" id="mobile" class="form-control"
-                                            placeholder="+91 98765 43210">
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label>GSTIN</label>
-                                        <input type="text" id="gstin" class="form-control"
-                                            placeholder="22AAAAA0000A1Z5">
-                                    </div>
-                                </div>
-
-                                <button type="submit" class="btn btn-primary w-100">Save Profile</button>
-                            </form>
-
-                        </div>
-                    </div>
-                </div>
-            </main>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item"><a class="sidebar-link" href="index.html">Dashboard</a></li>
+                <li class="sidebar-item"><a class="sidebar-link" href="Sales_invoices_List.html">Sales Invoice List</a></li>
+                <li class="sidebar-item"><a class="sidebar-link" href="Purchase_invoices_List.html">Purchase Invoice List</a></li>
+                <li class="sidebar-item"><a class="sidebar-link" href="Purchase-Invoice.html">Create Purchase Invoice</a></li>
+                <li class="sidebar-item"><a class="sidebar-link" href="Sales-Invoice.html">Create Sales Invoice</a></li>
+                <li class="sidebar-item active"><a class="sidebar-link" href="settings.html">Settings</a></li>
+            </ul>
         </div>
+    </nav>
+
+    <!-- Main -->
+    <div class="main">
+        <main class="content">
+            <div class="container-fluid p-0">
+
+                <h1 class="h3 mb-3">Settings</h1>
+
+                <div class="card">
+                    <div class="card-body">
+
+                        <h3 class="mb-4">Company Profile</h3>
+
+                        <button id="editBtn" class="btn btn-secondary mb-3">Edit Profile</button>
+
+                        <form id="profileForm">
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label>Company Name</label>
+                                    <input type="text" id="companyName" class="form-control disabled-input">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label>Owner Name</label>
+                                    <input type="text" id="ownerName" class="form-control disabled-input">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label>Address</label>
+                                <textarea id="address" class="form-control disabled-input"></textarea>
+                            </div>
+
+                            <div class="row">
+
+                                <div class="col-md-6 mb-3">
+                                    <label>Mobile Number</label>
+                                    <input type="text" id="mobile" class="form-control disabled-input">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label>GSTIN</label>
+                                    <input type="text" id="gstin" class="form-control disabled-input">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label>Account Number</label>
+                                    <input type="text" id="accountnumber" class="form-control disabled-input">
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label>Account Holder Name</label>
+                                    <input type="text" id="accountholdername" class="form-control disabled-input">
+                                </div>
+
+                            </div>
+
+                            <button type="submit" id="saveBtn" class="btn btn-primary w-100" disabled>Save Profile</button>
+
+                        </form>
+
+                    </div>
+                </div>
+
+            </div>
+        </main>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-    <script>
-        feather.replace();
-    </script>
 
-    <!-- JavaScript: Axios Calls -->
-    <script>
-        let profileId = null; // To track existing profile
+</div>
 
-        // Fetch existing profile when page loads
-        document.addEventListener('DOMContentLoaded', function () {
-            axios.get('/api/companies')
-                .then(function (response) {
-                    if (response.data.length > 0) {
-                        const profile = response.data[0]; // Take first company
-                        profileId = profile.id; // Save ID for update
-                        document.getElementById('companyName').value = profile.companyName || '';
-                        document.getElementById('ownerName').value = profile.ownerName || '';
-                        document.getElementById('address').value = profile.address || '';
-                        document.getElementById('mobile').value = profile.mobile || '';
-                        document.getElementById('gstin').value = profile.gstin || '';
-                    }
-                })
-                .catch(function (error) {
-                    console.error('Error fetching profile:', error);
-                });
-        });
+<!-- Axios Logic -->
+<script>
 
-        // Handle form submit
-        document.getElementById('profileForm').addEventListener('submit', function (e) {
-            e.preventDefault();
+let PROFILE_URL = "http://localhost:8080/api/companies";
+let profileId = null;
 
-            const profileData = {
-                companyName: document.getElementById('companyName').value,
-                ownerName: document.getElementById('ownerName').value,
-                address: document.getElementById('address').value,
-                mobile: document.getElementById('mobile').value,
-                gstin: document.getElementById('gstin').value
-            };
+function disableForm() {
+    document.querySelectorAll(".form-control").forEach(f => {
+        f.classList.add("disabled-input");
+        f.disabled = true;
+    });
+    saveBtn.disabled = true;
+}
 
-            if (profileId) {
-                // Update existing profile
-                axios.put('/api/companies/' + profileId, profileData)
-                    .then(function (response) {
-                        alert('Profile updated successfully!');
-                        console.log(response.data);
-                    })
-                    .catch(function (error) {
-                        console.error('Error updating profile:', error);
-                        alert('Failed to update profile!');
-                    });
-            } else {
-                // Create new profile
-                axios.post('/api/companies', profileData)
-                    .then(function (response) {
-                        alert('Profile saved successfully!');
-                        profileId = response.data.id; // Save new ID for future updates
-                        console.log(response.data);
-                    })
-                    .catch(function (error) {
-                        console.error('Error saving profile:', error);
-                        alert('Failed to save profile!');
-                    });
+function enableForm() {
+    document.querySelectorAll(".form-control").forEach(f => {
+        f.classList.remove("disabled-input");
+        f.disabled = false;
+    });
+    saveBtn.disabled = false;
+}
+
+function loadProfile() {
+    axios.get(PROFILE_URL)
+        .then(res => {
+            if (res.data.length > 0) {
+                let p = res.data[0];
+                profileId = p.id;
+
+                companyName.value = p.companyName || "";
+                ownerName.value = p.ownerName || "";
+                address.value = p.address || "";
+                mobile.value = p.mobile || "";
+                gstin.value = p.gstin || "";
+                accountnumber.value = p.accountnumber || "";
+                accountholdername.value = p.accountholdername || "";
             }
-        });
-    </script>
-</body>
+        })
+        .catch(err => console.log("GET ERROR:", err));
+}
 
+document.addEventListener("DOMContentLoaded", function () {
+    loadProfile();
+    disableForm();
+});
+
+editBtn.addEventListener("click", function () {
+    enableForm();
+});
+
+profileForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const data = {
+        companyName: companyName.value,
+        ownerName: ownerName.value,
+        address: address.value,
+        mobile: mobile.value,
+        gstin: gstin.value,
+        accountnumber: accountnumber.value,
+        accountholdername: accountholdername.value
+    };
+
+    if (profileId) {
+        axios.put(`${PROFILE_URL}/${profileId}`, data)
+            .then(() => alert("Profile updated successfully!"))
+            .catch(() => alert("Update Failed!"));
+    } else {
+        axios.post(PROFILE_URL, data)
+            .then(res => {
+                profileId = res.data.id;
+                alert("Profile Saved Successfully!");
+            })
+            .catch(() => alert("Save Failed!"));
+    }
+
+});
+
+</script>
+
+</body>
 </html>
